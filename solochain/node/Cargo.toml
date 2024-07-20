@@ -21,23 +21,21 @@ serde_json = { workspace = true, default-features = true }
 jsonrpsee = { features = ["server"], workspace = true }
 
 # substrate client
-sc-cli = { workspace = true, default-features = true }
-sp-core = { workspace = true, default-features = true }
-sc-executor = { workspace = true, default-features = true }
-sc-network = { workspace = true, default-features = true }
-sc-service = { workspace = true, default-features = true }
-sc-telemetry = { workspace = true, default-features = true }
-sc-transaction-pool = { workspace = true, default-features = true }
-sc-transaction-pool-api = { workspace = true, default-features = true }
-sc-offchain = { workspace = true, default-features = true }
-sc-consensus-aura = { workspace = true, default-features = true }
-sp-consensus-aura = { workspace = true, default-features = true }
-sc-consensus = { workspace = true, default-features = true }
-sc-consensus-grandpa = { workspace = true, default-features = true }
-sp-consensus-grandpa = { workspace = true, default-features = true }
-sc-client-api = { workspace = true, default-features = true }
-sc-rpc-api = { workspace = true, default-features = true }
-sc-basic-authorship = { workspace = true, default-features = true }
+sc-cli = { workspace = true }
+sp-core = { workspace = true }
+sc-executor = { workspace = true }
+sc-network = { workspace = true }
+sc-service = { workspace = true }
+sc-telemetry = { workspace = true }
+sc-transaction-pool = { workspace = true }
+sc-transaction-pool-api = { workspace = true }
+sc-offchain = { workspace = true }
+sc-consensus-aura = { workspace = true }
+sc-consensus = { workspace = true }
+sc-consensus-grandpa = { workspace = true }
+sc-client-api = { workspace = true }
+sc-rpc-api = { workspace = true }
+sc-basic-authorship = { workspace = true }
 
 # substrate primitives
 sp-runtime = { workspace = true, default-features = true }
@@ -48,6 +46,8 @@ sp-keyring = { workspace = true, default-features = true }
 sp-api = { workspace = true, default-features = true }
 sp-blockchain = { workspace = true, default-features = true }
 sp-block-builder = { workspace = true, default-features = true }
+sp-consensus-aura = { workspace = true, default-features = true }
+sp-consensus-grandpa = { workspace = true, default-features = true }
 
 # frame and pallets
 frame-system = { workspace = true, default-features = true }
@@ -62,7 +62,7 @@ frame-benchmarking-cli = { workspace = true, default-features = true }
 solochain-template-runtime = { workspace = true }
 
 [build-dependencies]
-substrate-build-script-utils = { workspace = true, default-features = true }
+substrate-build-script-utils = { workspace = true }
 
 [features]
 default = []

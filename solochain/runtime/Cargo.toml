@@ -40,7 +40,6 @@ sp-inherents = { workspace = true, default-features = false }
 sp-offchain = { workspace = true, default-features = false }
 sp-runtime = { workspace = true, default-features = false, features = ["serde"] }
 sp-session = { workspace = true, default-features = false }
-sp-std = { workspace = true, default-features = false }
 sp-storage = { workspace = true, default-features = false }
 sp-transaction-pool = { workspace = true, default-features = false }
 sp-version = { workspace = true, default-features = false, features = ["serde"] }
@@ -58,7 +57,7 @@ frame-system-benchmarking = { workspace = true, optional = true, default-feature
 pallet-template = { workspace = true, default-features = false }
 
 [build-dependencies]
-substrate-wasm-builder = { workspace = true, optional = true, default-features = true }
+substrate-wasm-builder = { workspace = true, optional = true }
 
 [features]
 default = ["std"]
@@ -79,10 +78,11 @@ std = [
 	"pallet-balances/std",
 	"pallet-grandpa/std",
 	"pallet-sudo/std",
-	"pallet-template/std",
 	"pallet-timestamp/std",
 	"pallet-transaction-payment-rpc-runtime-api/std",
 	"pallet-transaction-payment/std",
+
+	"pallet-template/std",
 
 	"sp-api/std",
 	"sp-block-builder/std",
@@ -94,7 +94,6 @@ std = [
 	"sp-offchain/std",
 	"sp-runtime/std",
 	"sp-session/std",
-	"sp-std/std",
 	"sp-storage/std",
 	"sp-transaction-pool/std",
 	"sp-version/std",
@@ -103,6 +102,7 @@ std = [
 ]
 
 runtime-benchmarks = [
+	"sp-runtime/runtime-benchmarks",
 	"frame-benchmarking/runtime-benchmarks",
 	"frame-support/runtime-benchmarks",
 	"frame-system-benchmarking/runtime-benchmarks",
@@ -110,12 +110,12 @@ runtime-benchmarks = [
 	"pallet-balances/runtime-benchmarks",
 	"pallet-grandpa/runtime-benchmarks",
 	"pallet-sudo/runtime-benchmarks",
-	"pallet-template/runtime-benchmarks",
 	"pallet-timestamp/runtime-benchmarks",
-	"sp-runtime/runtime-benchmarks",
+	"pallet-template/runtime-benchmarks",
 ]
 
 try-runtime = [
+	"sp-runtime/try-runtime",
 	"frame-executive/try-runtime",
 	"frame-support/try-runtime",
 	"frame-system/try-runtime",
@@ -124,8 +124,7 @@ try-runtime = [
 	"pallet-balances/try-runtime",
 	"pallet-grandpa/try-runtime",
 	"pallet-sudo/try-runtime",
-	"pallet-template/try-runtime",
 	"pallet-timestamp/try-runtime",
 	"pallet-transaction-payment/try-runtime",
-	"sp-runtime/try-runtime",
+	"pallet-template/try-runtime",
 ]
