@@ -4,7 +4,6 @@
 include!(concat!(env!("OUT_DIR"), "/wasm_binary.rs"));
 
 extern crate alloc;
-
 use alloc::{vec, vec::Vec};
 use pallet_grandpa::AuthorityId as GrandpaId;
 use sp_api::impl_runtime_apis;
@@ -372,7 +371,7 @@ impl_runtime_apis! {
 			Runtime::metadata_at_version(version)
 		}
 
-		fn metadata_versions() -> alloc::vec::Vec<u32> {
+		fn metadata_versions() -> Vec<u32> {
 			Runtime::metadata_versions()
 		}
 	}

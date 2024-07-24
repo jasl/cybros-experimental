@@ -13,7 +13,6 @@ mod configs;
 mod weights;
 
 extern crate alloc;
-
 use alloc::vec::Vec;
 use smallvec::smallvec;
 use sp_runtime::{
