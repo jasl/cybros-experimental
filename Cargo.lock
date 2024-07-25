@@ -12257,6 +12257,7 @@ version = "0.0.0"
 dependencies = [
  "clap",
  "frame-benchmarking-cli",
+ "frame-metadata-hash-extension",
  "frame-system",
  "futures",
  "jsonrpsee",
@@ -12299,6 +12300,7 @@ version = "0.0.0"
 dependencies = [
  "frame-benchmarking",
  "frame-executive",
+ "frame-metadata-hash-extension",
  "frame-support",
  "frame-system",
  "frame-system-benchmarking",
