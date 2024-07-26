@@ -87,7 +87,6 @@ sp-io = { workspace = true }
 
 [build-dependencies]
 substrate-wasm-builder = { workspace = true, optional = true }
-docify = { workspace = true }
 
 [features]
 default = [ "std" ]

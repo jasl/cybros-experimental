@@ -49,12 +49,10 @@ use super::{
 
 // we move some impls outside so we can easily use them with `docify`.
 impl Runtime {
-	#[docify::export]
 	fn impl_slot_duration() -> sp_consensus_aura::SlotDuration {
 		sp_consensus_aura::SlotDuration::from_millis(SLOT_DURATION)
 	}
 
-	#[docify::export]
 	fn impl_can_build_upon(
 		included_hash: <Block as BlockT>::Hash,
 		slot: cumulus_primitives_aura::Slot,

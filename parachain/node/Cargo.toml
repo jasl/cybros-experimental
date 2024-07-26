@@ -13,39 +13,38 @@ build = "build.rs"
 # [[bin]]
 # name = "parachain-template-node"
 
+[build-dependencies]
+substrate-build-script-utils = { workspace = true }
+
 [dependencies]
-clap = { features = ["derive"], workspace = true }
-log = { workspace = true, default-features = true }
-scale-codec = { workspace = true, default-features = true }
-serde = { features = ["derive"], workspace = true, default-features = true }
-jsonrpsee = { features = ["server"], workspace = true }
+clap = { workspace = true, features = ["derive"] }
 futures = { workspace = true }
 serde_json = { workspace = true, default-features = true }
-docify = { workspace = true }
+jsonrpsee = { workspace = true, features = ["server"] }
+log = { workspace = true, default-features = true }
+scale-codec = { workspace = true, default-features = true }
+serde = { workspace = true, default-features = true, features = ["derive"] }
 
-# Local
-parachain-template-runtime = { workspace = true }
+# Substrate client
+sc-basic-authorship = { workspace = true }
+sc-chain-spec = { workspace = true }
+sc-cli = { workspace = true }
+sc-client-api = { workspace = true }
+sc-offchain = { workspace = true }
+sc-consensus = { workspace = true }
+sc-executor = { workspace = true }
+sc-network = { workspace = true }
+sc-network-sync = { workspace = true }
+sc-rpc = { workspace = true }
+sc-service = { workspace = true }
+sc-sysinfo = { workspace = true }
+sc-telemetry = { workspace = true }
+sc-tracing = { workspace = true }
+sc-transaction-pool = { workspace = true }
+sc-transaction-pool-api = { workspace = true }
+substrate-prometheus-endpoint = { workspace = true }
 
-# Substrate
-frame-benchmarking = { workspace = true, default-features = true }
-frame-benchmarking-cli = { workspace = true, default-features = true }
-pallet-transaction-payment-rpc = { workspace = true, default-features = true }
-sc-basic-authorship = { workspace = true, default-features = true }
-sc-chain-spec = { workspace = true, default-features = true }
-sc-cli = { workspace = true, default-features = true }
-sc-client-api = { workspace = true, default-features = true }
-sc-offchain = { workspace = true, default-features = true }
-sc-consensus = { workspace = true, default-features = true }
-sc-executor = { workspace = true, default-features = true }
-sc-network = { workspace = true, default-features = true }
-sc-network-sync = { workspace = true, default-features = true }
-sc-rpc = { workspace = true, default-features = true }
-sc-service = { workspace = true, default-features = true }
-sc-sysinfo = { workspace = true, default-features = true }
-sc-telemetry = { workspace = true, default-features = true }
-sc-tracing = { workspace = true, default-features = true }
-sc-transaction-pool = { workspace = true, default-features = true }
-sc-transaction-pool-api = { workspace = true, default-features = true }
+# Substrate primitives
 sp-api = { workspace = true, default-features = true }
 sp-block-builder = { workspace = true, default-features = true }
 sp-blockchain = { workspace = true, default-features = true }
@@ -55,13 +54,17 @@ sp-keystore = { workspace = true, default-features = true }
 sp-io = { workspace = true, default-features = true }
 sp-runtime = { workspace = true, default-features = true }
 sp-timestamp = { workspace = true, default-features = true }
+
+# Frame and pallets
+frame-benchmarking = { workspace = true, default-features = true }
+frame-benchmarking-cli = { workspace = true, default-features = true }
 substrate-frame-rpc-system = { workspace = true, default-features = true }
-substrate-prometheus-endpoint = { workspace = true }
+pallet-transaction-payment-rpc = { workspace = true, default-features = true }
 
 # Polkadot
-polkadot-cli = { features = ["rococo-native"], workspace = true, default-features = true }
+polkadot-cli = { workspace = true, default-features = true, features = ["rococo-native"] }
 polkadot-primitives = { workspace = true, default-features = true }
-xcm = { workspace = true }
+xcm = { workspace = true, default-features = true }
 
 # Cumulus
 cumulus-client-cli = { workspace = true, default-features = true }
@@ -75,8 +78,8 @@ cumulus-primitives-parachain-inherent = { workspace = true, default-features = t
 cumulus-relay-chain-interface = { workspace = true, default-features = true }
 color-print = { workspace = true }
 
-[build-dependencies]
-substrate-build-script-utils = { workspace = true, default-features = true }
+# Local Dependencies
+parachain-template-runtime = { workspace = true }
 
 [features]
 default = []
@@ -84,14 +87,14 @@ runtime-benchmarks = [
 	"cumulus-primitives-core/runtime-benchmarks",
 	"frame-benchmarking-cli/runtime-benchmarks",
 	"frame-benchmarking/runtime-benchmarks",
-	"parachain-template-runtime/runtime-benchmarks",
 	"polkadot-cli/runtime-benchmarks",
 	"polkadot-primitives/runtime-benchmarks",
 	"sc-service/runtime-benchmarks",
 	"sp-runtime/runtime-benchmarks",
+	"parachain-template-runtime/runtime-benchmarks",
 ]
 try-runtime = [
-	"parachain-template-runtime/try-runtime",
 	"polkadot-cli/try-runtime",
 	"sp-runtime/try-runtime",
+	"parachain-template-runtime/try-runtime",
 ]

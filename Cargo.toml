@@ -131,7 +131,6 @@ parachains-common = { git = "https://github.com/paritytech/polkadot-sdk.git", br
 parachain-info = { package = "staging-parachain-info", git = "https://github.com/paritytech/polkadot-sdk.git", branch = "master", default-features = false }
 
 # Build related
-docify = "0.2.8"
 substrate-build-script-utils = { git = "https://github.com/paritytech/polkadot-sdk.git", branch = "master" }
 substrate-wasm-builder = { git = "https://github.com/paritytech/polkadot-sdk.git", branch = "master" }
 
