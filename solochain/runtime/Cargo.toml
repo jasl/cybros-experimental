@@ -58,13 +58,28 @@ frame-benchmarking = { workspace = true, optional = true, default-features = fal
 frame-system-benchmarking = { workspace = true, optional = true, default-features = false }
 
 # The pallet in this template.
-pallet-template = { workspace = true, default-features = false }
 
 [features]
 default = ["std"]
 std = [
 	"scale-codec/std",
 	"scale-info/std",
+
+	"substrate-wasm-builder",
+
+	"sp-api/std",
+	"sp-block-builder/std",
+	"sp-consensus-aura/std",
+	"sp-consensus-grandpa/std",
+	"sp-core/std",
+	"sp-genesis-builder/std",
+	"sp-inherents/std",
+	"sp-offchain/std",
+	"sp-runtime/std",
+	"sp-session/std",
+	"sp-storage/std",
+	"sp-transaction-pool/std",
+	"sp-version/std",
 
 	"frame-executive/std",
 	"frame-metadata-hash-extension/std",
@@ -83,24 +98,6 @@ std = [
 	"pallet-timestamp/std",
 	"pallet-transaction-payment-rpc-runtime-api/std",
 	"pallet-transaction-payment/std",
-
-	"pallet-template/std",
-
-	"sp-api/std",
-	"sp-block-builder/std",
-	"sp-consensus-aura/std",
-	"sp-consensus-grandpa/std",
-	"sp-core/std",
-	"sp-genesis-builder/std",
-	"sp-inherents/std",
-	"sp-offchain/std",
-	"sp-runtime/std",
-	"sp-session/std",
-	"sp-storage/std",
-	"sp-transaction-pool/std",
-	"sp-version/std",
-
-	"substrate-wasm-builder",
 ]
 
 runtime-benchmarks = [
@@ -113,7 +110,6 @@ runtime-benchmarks = [
 	"pallet-grandpa/runtime-benchmarks",
 	"pallet-sudo/runtime-benchmarks",
 	"pallet-timestamp/runtime-benchmarks",
-	"pallet-template/runtime-benchmarks",
 ]
 
 try-runtime = [
@@ -128,7 +124,6 @@ try-runtime = [
 	"pallet-sudo/try-runtime",
 	"pallet-timestamp/try-runtime",
 	"pallet-transaction-payment/try-runtime",
-	"pallet-template/try-runtime",
 ]
 
 # Enable the metadata hash generation.
