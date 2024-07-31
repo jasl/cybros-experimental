@@ -20,7 +20,7 @@ scale-codec = { workspace = true, default-features = false, features = ["derive"
 scale-info = { workspace = true, default-features = false, features = ["derive"] }
 hex-literal = { workspace = true, optional = true }
 log = { workspace = true, default-features = false }
-smallvec = { workspace = true}
+smallvec = { workspace = true }
 
 # Substrate / FRAME
 frame-benchmarking = { workspace = true, optional = true, default-features = false }
