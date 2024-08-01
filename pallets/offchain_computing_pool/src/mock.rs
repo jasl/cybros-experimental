@@ -23,7 +23,7 @@ use frame_support::{
 	traits::{OnFinalize, OnInitialize},
 };
 use frame_system::EnsureSigned;
-use sp_core::{ConstBool, ConstU128, ConstU16, ConstU32, ConstU64};
+use sp_core::{ConstBool, ConstU128, ConstU32, ConstU64};
 use sp_runtime::{
 	traits::{IdentifyAccount, IdentityLookup, Verify},
 	BuildStorage, MultiSignature,
@@ -56,32 +56,19 @@ frame_support::construct_runtime!(
 	}
 );
 
-#[derive_impl(frame_system::config_preludes::TestDefaultConfig as frame_system::DefaultConfig)]
+#[derive_impl(frame_system::config_preludes::TestDefaultConfig)]
 impl frame_system::Config for Test {
 	type AccountId = AccountId;
 	type Lookup = IdentityLookup<Self::AccountId>;
 	type Block = Block;
-	type PalletInfo = PalletInfo;
 	type AccountData = pallet_balances::AccountData<Balance>;
-	type SS58Prefix = ConstU16<42>;
-	type MaxConsumers = ConstU32<16>;
 }
 
+#[derive_impl(pallet_balances::config_preludes::TestDefaultConfig)]
 impl pallet_balances::Config for Test {
-	type RuntimeEvent = RuntimeEvent;
-	type RuntimeHoldReason = RuntimeHoldReason;
-	type RuntimeFreezeReason = RuntimeFreezeReason;
-	type WeightInfo = ();
-	type Balance = Balance;
-	type DustRemoval = ();
-	type ExistentialDeposit = ConstU128<{ CENTS }>;
 	type AccountStore = System;
-	type ReserveIdentifier = [u8; 8];
-	type FreezeIdentifier = ();
-	type MaxLocks = ();
-	type MaxReserves = ();
-	type MaxHolds = ConstU32<3>;
-	type MaxFreezes = ();
+	type Balance = Balance;
+	type ExistentialDeposit = ConstU128<{ CENTS }>;
 }
 
 impl pallet_timestamp::Config for Test {

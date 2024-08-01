@@ -57,7 +57,7 @@ use frame_support::{
 	transactional,
 };
 use scale_codec::{Decode, Encode};
-use sp_core::{sr25519, H256};
+use sp_core::{sr25519, H256, ByteArray};
 use sp_io::crypto::sr25519_verify;
 use sp_runtime::{
 	DispatchError,
@@ -837,7 +837,7 @@ impl<T: Config> Pallet<T> {
 
 		let encoded_message = Encode::encode(payload);
 
-		let Some(signature) = sr25519::Signature::from_slice(attestation_payload) else {
+		let Ok(signature) = sr25519::Signature::from_slice(attestation_payload) else {
 			return Err(Error::<T>::CanNotVerifyPayload.into())
 		};
 

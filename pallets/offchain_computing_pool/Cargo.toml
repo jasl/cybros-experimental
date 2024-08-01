@@ -30,13 +30,12 @@ pallet-offchain_computing-infra = { path = "../offchain_computing_infra", defaul
 primitives = { package = "pallet-offchain_computing-pool-primitives", path = "./primitives", default-features = false }
 
 [dev-dependencies]
-sp-core = { workspace = true }
-sp-io = { workspace = true }
-sp-runtime = { workspace = true }
+sp-core = { workspace = true, default-features = true }
+sp-io = { workspace = true, default-features = true }
 
-pallet-balances = { workspace = true }
-pallet-timestamp = { workspace = true }
-pallet-insecure-randomness-collective-flip = { workspace = true }
+pallet-balances = { workspace = true, default-features = true }
+pallet-timestamp = { workspace = true, default-features = true }
+pallet-insecure-randomness-collective-flip = { workspace = true, default-features = true }
 
 [features]
 default = ["std"]

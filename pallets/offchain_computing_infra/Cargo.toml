@@ -33,9 +33,9 @@ frame-system = { workspace = true, default-features = false }
 primitives = { package = "pallet-offchain_computing-infra-primitives", path = "./primitives", default-features = false }
 
 [dev-dependencies]
-pallet-balances = { workspace = true }
-pallet-timestamp = { workspace = true }
-pallet-insecure-randomness-collective-flip = { workspace = true }
+pallet-balances = { workspace = true, default-features = true }
+pallet-timestamp = { workspace = true, default-features = true }
+pallet-insecure-randomness-collective-flip = { workspace = true, default-features = true }
 
 [features]
 default = ["std"]
