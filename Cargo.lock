@@ -12408,6 +12408,8 @@ dependencies = [
  "pallet-aura",
  "pallet-balances",
  "pallet-grandpa",
+ "pallet-offchain_computing-infra",
+ "pallet-offchain_computing-pool",
  "pallet-sudo",
  "pallet-timestamp",
  "pallet-transaction-payment",

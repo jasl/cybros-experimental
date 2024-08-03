@@ -22,7 +22,7 @@ use scale_codec::{Decode, Encode, MaxEncodedLen};
 use scale_info::TypeInfo;
 use sp_core::{bounded::BoundedVec, ConstU32, RuntimeDebug};
 
-pub use base_primitives::*;
+pub use pallet_offchain_computing_infra_primitives::*;
 
 pub type UniqueTrackId = BoundedVec<u8, ConstU32<16>>;
 

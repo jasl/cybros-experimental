@@ -138,6 +138,11 @@ pallet-message-queue = { git = "https://github.com/paritytech/polkadot-sdk.git",
 pallet-insecure-randomness-collective-flip = { git = "https://github.com/paritytech/polkadot-sdk.git", branch = "master", default-features = false }
 
 # Local dependencies
+pallet-offchain_computing-infra-primitives = { path = "pallets/offchain_computing_infra/primitives", default-features = false }
+pallet-offchain_computing-infra = { path = "pallets/offchain_computing_infra", default-features = false }
+pallet-offchain_computing-pool-primitives = { path = "pallets/offchain_computing_pool/primitives", default-features = false }
+pallet-offchain_computing-pool = { path = "pallets/offchain_computing_pool", default-features = false }
+
 solochain-template-runtime = { path = "solochain/runtime", default-features = false }
 parachain-template-runtime = { path = "parachain/runtime", default-features = false }
 
