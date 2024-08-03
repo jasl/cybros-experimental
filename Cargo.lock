@@ -12408,6 +12408,7 @@ dependencies = [
  "pallet-aura",
  "pallet-balances",
  "pallet-grandpa",
+ "pallet-insecure-randomness-collective-flip",
  "pallet-offchain_computing-infra",
  "pallet-offchain_computing-pool",
  "pallet-sudo",

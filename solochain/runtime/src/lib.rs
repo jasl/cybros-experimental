@@ -216,5 +216,14 @@ mod runtime {
 	pub type TransactionPayment = pallet_transaction_payment;
 
 	#[runtime::pallet_index(6)]
+	pub type Randomness = pallet_insecure_randomness_collective_flip;
+
+	#[runtime::pallet_index(10)]
+	pub type OffchainComputingInfra = pallet_offchain_computing_infra;
+
+	#[runtime::pallet_index(11)]
+	pub type OffchainComputingPool = pallet_offchain_computing_pool;
+
+	#[runtime::pallet_index(255)]
 	pub type Sudo = pallet_sudo;
 }

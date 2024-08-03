@@ -19,21 +19,6 @@ substrate-wasm-builder = { workspace = true, optional = true }
 scale-codec = { workspace = true, default-features = false, features = ["derive"] }
 scale-info = { workspace = true, default-features = false, features = ["derive", "serde"] }
 
-# frame
-frame-support = { workspace = true, default-features = false, features = ["experimental"] }
-frame-system = { workspace = true, default-features = false }
-frame-try-runtime = { workspace = true, optional = true, default-features = false }
-frame-executive = { workspace = true, default-features = false }
-frame-metadata-hash-extension = { workspace = true, default-features = false }
-
-# frame pallets
-pallet-aura = { workspace = true, default-features = false }
-pallet-balances = { workspace = true, default-features = false }
-pallet-grandpa = { workspace = true, default-features = false }
-pallet-sudo = { workspace = true, default-features = false }
-pallet-timestamp = { workspace = true, default-features = false }
-pallet-transaction-payment = { workspace = true, default-features = false }
-
 # primitives
 sp-api = { workspace = true }
 sp-block-builder = { workspace = true, default-features = false }
@@ -57,7 +42,26 @@ pallet-transaction-payment-rpc-runtime-api = { workspace = true, default-feature
 frame-benchmarking = { workspace = true, optional = true, default-features = false }
 frame-system-benchmarking = { workspace = true, optional = true, default-features = false }
 
+# frame
+frame-support = { workspace = true, default-features = false, features = ["experimental"] }
+frame-system = { workspace = true, default-features = false }
+frame-try-runtime = { workspace = true, optional = true, default-features = false }
+frame-executive = { workspace = true, default-features = false }
+frame-metadata-hash-extension = { workspace = true, default-features = false }
+
+# frame pallets
+pallet-aura = { workspace = true, default-features = false }
+pallet-balances = { workspace = true, default-features = false }
+pallet-grandpa = { workspace = true, default-features = false }
+pallet-sudo = { workspace = true, default-features = false }
+pallet-timestamp = { workspace = true, default-features = false }
+pallet-transaction-payment = { workspace = true, default-features = false }
+pallet-insecure-randomness-collective-flip = { workspace = true, default-features = false }
+
 # The pallet in this template.
+pallet-offchain_computing-infra = { workspace = true, default-features = false }
+pallet-offchain_computing-pool = { workspace = true, default-features = false }
+
 
 [features]
 default = ["std"]
@@ -98,6 +102,10 @@ std = [
 	"pallet-timestamp/std",
 	"pallet-transaction-payment-rpc-runtime-api/std",
 	"pallet-transaction-payment/std",
+	"pallet-insecure-randomness-collective-flip/std",
+
+	"pallet-offchain_computing-infra/std",
+	"pallet-offchain_computing-pool/std",
 ]
 
 runtime-benchmarks = [
@@ -110,6 +118,9 @@ runtime-benchmarks = [
 	"pallet-grandpa/runtime-benchmarks",
 	"pallet-sudo/runtime-benchmarks",
 	"pallet-timestamp/runtime-benchmarks",
+
+	"pallet-offchain_computing-infra/runtime-benchmarks",
+	"pallet-offchain_computing-pool/runtime-benchmarks",
 ]
 
 try-runtime = [
@@ -124,6 +135,10 @@ try-runtime = [
 	"pallet-sudo/try-runtime",
 	"pallet-timestamp/try-runtime",
 	"pallet-transaction-payment/try-runtime",
+	"pallet-insecure-randomness-collective-flip/try-runtime",
+
+	"pallet-offchain_computing-infra/try-runtime",
+	"pallet-offchain_computing-pool/try-runtime",
 ]
 
 # Enable the metadata hash generation.
