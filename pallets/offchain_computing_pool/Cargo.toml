@@ -6,7 +6,7 @@ readme = "README.md"
 authors.workspace = true
 repository.workspace = true
 license.workspace = true
-edition = "2021"
+edition.workspace = true
 publish = false
 
 [lints]

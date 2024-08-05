@@ -5,7 +5,7 @@ description = "A crate that hosts a common definitions that are relevant for the
 authors.workspace = true
 repository.workspace = true
 license = "GPL-3.0-or-later WITH Classpath-exception-2.0"
-edition = "2021"
+edition.workspace = true
 publish = false
 
 [lints]

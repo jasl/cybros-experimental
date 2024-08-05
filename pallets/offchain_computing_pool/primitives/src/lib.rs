@@ -60,8 +60,10 @@ pub struct JobPolicy<PoolId, BlockNumber> {
 
 #[derive(Clone, Encode, Decode, Eq, PartialEq, RuntimeDebug, TypeInfo, MaxEncodedLen)]
 pub enum JobScheduler {
-	/// DemoOnly
-	DemoOnly
+	/// Preemption, should not use on production
+	Preemption,
+	/// Dispatcher
+	Dispatcher,
 }
 
 #[derive(Clone, Encode, Decode, Eq, PartialEq, RuntimeDebug, TypeInfo, MaxEncodedLen)]

@@ -1,0 +1,29 @@
+[package]
+name = "pallet-device_ids-runtime-api"
+version = "0.0.1-dev"
+description = "Runtime API for the Device IDs pallet."
+readme = "README.md"
+authors.workspace = true
+repository.workspace = true
+license.workspace = true
+edition.workspace = true
+publish = false
+
+[lints]
+workspace = true
+
+[package.metadata.docs.rs]
+targets = ["x86_64-unknown-linux-gnu"]
+
+[dependencies]
+scale-codec = { workspace = true, default-features = false, features = ["derive"] }
+pallet-device_ids = { workspace = true, default-features = false }
+sp-api = { workspace = true, default-features = false }
+
+[features]
+default = ["std"]
+std = [
+    "scale-codec/std",
+    "pallet-device_ids/std",
+    "sp-api/std",
+]
