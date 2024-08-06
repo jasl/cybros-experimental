@@ -71,7 +71,7 @@ impl<T: Config<I>, I: 'static> Pallet<T, I> {
 			ensure!(check_owner == &details.owner, Error::<T, I>::NoPermission);
 		}
 
-		ensure!(details.items <= max_supply, Error::<T, I>::MaxSupplyTooSmall);
+		ensure!(details.items_count <= max_supply, Error::<T, I>::MaxSupplyTooSmall);
 
 		CollectionConfigOf::<T, I>::try_mutate(collection, |maybe_config| {
 			let config = maybe_config.as_mut().ok_or(Error::<T, I>::NoConfig)?;

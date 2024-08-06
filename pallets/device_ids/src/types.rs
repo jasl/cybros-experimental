@@ -60,8 +60,6 @@ pub(super) type ItemDetailsFor<T, I> =
 /// A type alias for an accounts balance.
 pub(super) type BalanceOf<T, I = ()> =
 	<<T as Config<I>>::Currency as Currency<<T as SystemConfig>::AccountId>>::Balance;
-/// A type alias to represent the price of an item.
-pub(super) type ItemPrice<T, I = ()> = BalanceOf<T, I>;
 /// A type alias for the settings configuration of a collection.
 pub(super) type CollectionConfigFor<T, I = ()> =
 	CollectionConfig<BalanceOf<T, I>, BlockNumberFor<T>, <T as Config<I>>::CollectionId>;
@@ -90,13 +88,13 @@ pub struct CollectionDetails<AccountId, DepositBalance> {
 	/// collection. Used by `destroy`.
 	pub(super) owner_deposit: DepositBalance,
 	/// The total number of outstanding items of this collection.
-	pub(super) items: u32,
+	pub(super) items_count: u32,
 	/// The total number of outstanding item metadata of this collection.
-	pub(super) item_metadatas: u32,
+	pub(super) item_metadata_count: u32,
 	/// The total number of outstanding item configs of this collection.
-	pub(super) item_configs: u32,
+	pub(super) item_configs_count: u32,
 	/// The total number of attributes for this collection.
-	pub(super) attributes: u32,
+	pub(super) attributes_count: u32,
 }
 
 /// Witness data for the destroy transactions.
@@ -104,21 +102,21 @@ pub struct CollectionDetails<AccountId, DepositBalance> {
 pub struct DestroyWitness {
 	/// The total number of items in this collection that have outstanding item metadata.
 	#[codec(compact)]
-	pub item_metadatas: u32,
+	pub item_metadata_count: u32,
 	/// The total number of outstanding item configs of this collection.
 	#[codec(compact)]
-	pub item_configs: u32,
+	pub item_configs_count: u32,
 	/// The total number of attributes for this collection.
 	#[codec(compact)]
-	pub attributes: u32,
+	pub attributes_count: u32,
 }
 
 impl<AccountId, DepositBalance> CollectionDetails<AccountId, DepositBalance> {
 	pub fn destroy_witness(&self) -> DestroyWitness {
 		DestroyWitness {
-			item_metadatas: self.item_metadatas,
-			item_configs: self.item_configs,
-			attributes: self.attributes,
+			item_metadata_count: self.item_metadata_count,
+			item_configs_count: self.item_configs_count,
+			attributes_count: self.attributes_count,
 		}
 	}
 }
@@ -193,19 +191,6 @@ pub struct ItemTip<CollectionId, ItemId, AccountId, Amount> {
 	pub(super) receiver: AccountId,
 	/// An amount the sender is willing to tip.
 	pub(super) amount: Amount,
-}
-
-/// Information about the pending swap.
-#[derive(Clone, Encode, Decode, Eq, PartialEq, RuntimeDebug, Default, TypeInfo, MaxEncodedLen)]
-pub struct PendingSwap<CollectionId, ItemId, ItemPriceWithDirection, Deadline> {
-	/// The collection that contains the item that the user wants to receive.
-	pub(super) desired_collection: CollectionId,
-	/// The item the user wants to receive.
-	pub(super) desired_item: Option<ItemId>,
-	/// A price for the desired `item` with the direction.
-	pub(super) price: Option<ItemPriceWithDirection>,
-	/// A deadline for the swap.
-	pub(super) deadline: Deadline,
 }
 
 /// Information about the reserved attribute deposit.
@@ -451,8 +436,6 @@ pub enum PalletFeature {
 	Attributes,
 	/// Allow/disallow transfer approvals.
 	Approvals,
-	/// Allow/disallow atomic items swap.
-	Swaps,
 }
 
 /// Wrapper type for `BitFlags<PalletFeature>` that implements `Codec`.

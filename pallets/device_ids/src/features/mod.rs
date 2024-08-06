@@ -16,7 +16,6 @@
 // limitations under the License.
 
 pub mod approvals;
-pub mod atomic_swap;
 pub mod attributes;
 pub mod create_delete_collection;
 pub mod create_delete_item;

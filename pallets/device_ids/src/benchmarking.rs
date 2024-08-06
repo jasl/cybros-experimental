@@ -637,95 +637,12 @@ benchmarks_instance_pallet! {
 			mint_type: MintType::HolderOf(T::Helper::collection(0)),
 			start_block: Some(One::one()),
 			end_block: Some(One::one()),
-			price: Some(ItemPrice::<T, I>::from(1u32)),
+			price: Some(BalanceOf::<T, I>::from(1u32)),
 			default_item_settings: ItemSettings::all_enabled(),
 		};
 	}: _(SystemOrigin::Signed(caller.clone()), collection, mint_settings)
 	verify {
 		assert_last_event::<T, I>(Event::CollectionMintSettingsUpdated { collection }.into());
-	}
-
-	create_swap {
-		let (collection, caller, _) = create_collection::<T, I>();
-		let (item1, ..) = mint_item::<T, I>(0);
-		let (item2, ..) = mint_item::<T, I>(1);
-		let price = ItemPrice::<T, I>::from(100u32);
-		let price_direction = PriceDirection::Receive;
-		let price_with_direction = PriceWithDirection { amount: price, direction: price_direction };
-		let duration = T::MaxDeadlineDuration::get();
-		frame_system::Pallet::<T>::set_block_number(One::one());
-	}: _(SystemOrigin::Signed(caller.clone()), collection, item1, collection, Some(item2), Some(price_with_direction.clone()), duration)
-	verify {
-		let current_block = frame_system::Pallet::<T>::block_number();
-		assert_last_event::<T, I>(Event::SwapCreated {
-			offered_collection: collection,
-			offered_item: item1,
-			desired_collection: collection,
-			desired_item: Some(item2),
-			price: Some(price_with_direction),
-			deadline: current_block.saturating_add(duration),
-		}.into());
-	}
-
-	cancel_swap {
-		let (collection, caller, _) = create_collection::<T, I>();
-		let (item1, ..) = mint_item::<T, I>(0);
-		let (item2, ..) = mint_item::<T, I>(1);
-		let price = ItemPrice::<T, I>::from(100u32);
-		let origin = SystemOrigin::Signed(caller.clone()).into();
-		let duration = T::MaxDeadlineDuration::get();
-		let price_direction = PriceDirection::Receive;
-		let price_with_direction = PriceWithDirection { amount: price, direction: price_direction };
-		frame_system::Pallet::<T>::set_block_number(One::one());
-		DeviceIds::<T, I>::create_swap(origin, collection, item1, collection, Some(item2), Some(price_with_direction.clone()), duration)?;
-	}: _(SystemOrigin::Signed(caller.clone()), collection, item1)
-	verify {
-		assert_last_event::<T, I>(Event::SwapCancelled {
-			offered_collection: collection,
-			offered_item: item1,
-			desired_collection: collection,
-			desired_item: Some(item2),
-			price: Some(price_with_direction),
-			deadline: duration.saturating_add(One::one()),
-		}.into());
-	}
-
-	claim_swap {
-		let (collection, caller, _) = create_collection::<T, I>();
-		let (item1, ..) = mint_item::<T, I>(0);
-		let (item2, ..) = mint_item::<T, I>(1);
-		let price = ItemPrice::<T, I>::from(0u32);
-		let price_direction = PriceDirection::Receive;
-		let price_with_direction = PriceWithDirection { amount: price, direction: price_direction };
-		let duration = T::MaxDeadlineDuration::get();
-		let target: T::AccountId = account("target", 0, SEED);
-		let target_lookup = T::Lookup::unlookup(target.clone());
-		T::Currency::make_free_balance_be(&target, T::Currency::minimum_balance());
-		let origin = SystemOrigin::Signed(caller.clone());
-		frame_system::Pallet::<T>::set_block_number(One::one());
-		DeviceIds::<T, I>::transfer(origin.clone().into(), collection, item2, target_lookup)?;
-		DeviceIds::<T, I>::create_swap(
-			origin.clone().into(),
-			collection,
-			item1,
-			collection,
-			Some(item2),
-			Some(price_with_direction.clone()),
-			duration,
-		)?;
-	}: _(SystemOrigin::Signed(target.clone()), collection, item2, collection, item1, Some(price_with_direction.clone()))
-	verify {
-		let current_block = frame_system::Pallet::<T>::block_number();
-		assert_last_event::<T, I>(Event::SwapClaimed {
-			sent_collection: collection,
-			sent_item: item2,
-			sent_item_owner: target,
-			received_collection: collection,
-			received_item: item1,
-			received_item_owner: caller,
-			price: Some(price_with_direction),
-			deadline: duration.saturating_add(One::one()),
-		}.into());
 	}
 
 	mint_pre_signed {

@@ -82,9 +82,6 @@ pub trait WeightInfo {
 	fn set_accept_ownership() -> Weight;
 	fn set_collection_max_supply() -> Weight;
 	fn update_mint_settings() -> Weight;
-	fn create_swap() -> Weight;
-	fn cancel_swap() -> Weight;
-	fn claim_swap() -> Weight;
 	fn mint_pre_signed(n: u32, ) -> Weight;
 	fn set_attributes_pre_signed(n: u32, ) -> Weight;
 }
@@ -611,57 +608,6 @@ impl<T: frame_system::Config> WeightInfo for SubstrateWeight<T> {
 		Weight::from_parts(16_629_000, 3538)
 			.saturating_add(T::DbWeight::get().reads(2_u64))
 			.saturating_add(T::DbWeight::get().writes(1_u64))
-	}
-	/// Storage: `Nfts::Item` (r:2 w:0)
-	/// Proof: `Nfts::Item` (`max_values`: None, `max_size`: Some(861), added: 3336, mode: `MaxEncodedLen`)
-	/// Storage: `Nfts::PendingSwapOf` (r:0 w:1)
-	/// Proof: `Nfts::PendingSwapOf` (`max_values`: None, `max_size`: Some(71), added: 2546, mode: `MaxEncodedLen`)
-	fn create_swap() -> Weight {
-		// Proof Size summary in bytes:
-		//  Measured:  `494`
-		//  Estimated: `7662`
-		// Minimum execution time: 18_893_000 picoseconds.
-		Weight::from_parts(19_506_000, 7662)
-			.saturating_add(T::DbWeight::get().reads(2_u64))
-			.saturating_add(T::DbWeight::get().writes(1_u64))
-	}
-	/// Storage: `Nfts::PendingSwapOf` (r:1 w:1)
-	/// Proof: `Nfts::PendingSwapOf` (`max_values`: None, `max_size`: Some(71), added: 2546, mode: `MaxEncodedLen`)
-	/// Storage: `Nfts::Item` (r:1 w:0)
-	/// Proof: `Nfts::Item` (`max_values`: None, `max_size`: Some(861), added: 3336, mode: `MaxEncodedLen`)
-	fn cancel_swap() -> Weight {
-		// Proof Size summary in bytes:
-		//  Measured:  `513`
-		//  Estimated: `4326`
-		// Minimum execution time: 19_086_000 picoseconds.
-		Weight::from_parts(19_609_000, 4326)
-			.saturating_add(T::DbWeight::get().reads(2_u64))
-			.saturating_add(T::DbWeight::get().writes(1_u64))
-	}
-	/// Storage: `Nfts::Item` (r:2 w:2)
-	/// Proof: `Nfts::Item` (`max_values`: None, `max_size`: Some(861), added: 3336, mode: `MaxEncodedLen`)
-	/// Storage: `Nfts::PendingSwapOf` (r:1 w:2)
-	/// Proof: `Nfts::PendingSwapOf` (`max_values`: None, `max_size`: Some(71), added: 2546, mode: `MaxEncodedLen`)
-	/// Storage: `Nfts::Collection` (r:1 w:0)
-	/// Proof: `Nfts::Collection` (`max_values`: None, `max_size`: Some(84), added: 2559, mode: `MaxEncodedLen`)
-	/// Storage: `Nfts::Attribute` (r:2 w:0)
-	/// Proof: `Nfts::Attribute` (`max_values`: None, `max_size`: Some(479), added: 2954, mode: `MaxEncodedLen`)
-	/// Storage: `Nfts::CollectionConfigOf` (r:1 w:0)
-	/// Proof: `Nfts::CollectionConfigOf` (`max_values`: None, `max_size`: Some(73), added: 2548, mode: `MaxEncodedLen`)
-	/// Storage: `Nfts::ItemConfigOf` (r:2 w:0)
-	/// Proof: `Nfts::ItemConfigOf` (`max_values`: None, `max_size`: Some(48), added: 2523, mode: `MaxEncodedLen`)
-	/// Storage: `Nfts::Account` (r:0 w:4)
-	/// Proof: `Nfts::Account` (`max_values`: None, `max_size`: Some(88), added: 2563, mode: `MaxEncodedLen`)
-	/// Storage: `Nfts::ItemPriceOf` (r:0 w:2)
-	/// Proof: `Nfts::ItemPriceOf` (`max_values`: None, `max_size`: Some(89), added: 2564, mode: `MaxEncodedLen`)
-	fn claim_swap() -> Weight {
-		// Proof Size summary in bytes:
-		//  Measured:  `834`
-		//  Estimated: `7662`
-		// Minimum execution time: 84_103_000 picoseconds.
-		Weight::from_parts(85_325_000, 7662)
-			.saturating_add(T::DbWeight::get().reads(9_u64))
-			.saturating_add(T::DbWeight::get().writes(10_u64))
 	}
 	/// Storage: `Nfts::CollectionRoleOf` (r:2 w:0)
 	/// Proof: `Nfts::CollectionRoleOf` (`max_values`: None, `max_size`: Some(69), added: 2544, mode: `MaxEncodedLen`)
@@ -1246,57 +1192,6 @@ impl WeightInfo for () {
 		Weight::from_parts(16_629_000, 3538)
 			.saturating_add(RocksDbWeight::get().reads(2_u64))
 			.saturating_add(RocksDbWeight::get().writes(1_u64))
-	}
-	/// Storage: `Nfts::Item` (r:2 w:0)
-	/// Proof: `Nfts::Item` (`max_values`: None, `max_size`: Some(861), added: 3336, mode: `MaxEncodedLen`)
-	/// Storage: `Nfts::PendingSwapOf` (r:0 w:1)
-	/// Proof: `Nfts::PendingSwapOf` (`max_values`: None, `max_size`: Some(71), added: 2546, mode: `MaxEncodedLen`)
-	fn create_swap() -> Weight {
-		// Proof Size summary in bytes:
-		//  Measured:  `494`
-		//  Estimated: `7662`
-		// Minimum execution time: 18_893_000 picoseconds.
-		Weight::from_parts(19_506_000, 7662)
-			.saturating_add(RocksDbWeight::get().reads(2_u64))
-			.saturating_add(RocksDbWeight::get().writes(1_u64))
-	}
-	/// Storage: `Nfts::PendingSwapOf` (r:1 w:1)
-	/// Proof: `Nfts::PendingSwapOf` (`max_values`: None, `max_size`: Some(71), added: 2546, mode: `MaxEncodedLen`)
-	/// Storage: `Nfts::Item` (r:1 w:0)
-	/// Proof: `Nfts::Item` (`max_values`: None, `max_size`: Some(861), added: 3336, mode: `MaxEncodedLen`)
-	fn cancel_swap() -> Weight {
-		// Proof Size summary in bytes:
-		//  Measured:  `513`
-		//  Estimated: `4326`
-		// Minimum execution time: 19_086_000 picoseconds.
-		Weight::from_parts(19_609_000, 4326)
-			.saturating_add(RocksDbWeight::get().reads(2_u64))
-			.saturating_add(RocksDbWeight::get().writes(1_u64))
-	}
-	/// Storage: `Nfts::Item` (r:2 w:2)
-	/// Proof: `Nfts::Item` (`max_values`: None, `max_size`: Some(861), added: 3336, mode: `MaxEncodedLen`)
-	/// Storage: `Nfts::PendingSwapOf` (r:1 w:2)
-	/// Proof: `Nfts::PendingSwapOf` (`max_values`: None, `max_size`: Some(71), added: 2546, mode: `MaxEncodedLen`)
-	/// Storage: `Nfts::Collection` (r:1 w:0)
-	/// Proof: `Nfts::Collection` (`max_values`: None, `max_size`: Some(84), added: 2559, mode: `MaxEncodedLen`)
-	/// Storage: `Nfts::Attribute` (r:2 w:0)
-	/// Proof: `Nfts::Attribute` (`max_values`: None, `max_size`: Some(479), added: 2954, mode: `MaxEncodedLen`)
-	/// Storage: `Nfts::CollectionConfigOf` (r:1 w:0)
-	/// Proof: `Nfts::CollectionConfigOf` (`max_values`: None, `max_size`: Some(73), added: 2548, mode: `MaxEncodedLen`)
-	/// Storage: `Nfts::ItemConfigOf` (r:2 w:0)
-	/// Proof: `Nfts::ItemConfigOf` (`max_values`: None, `max_size`: Some(48), added: 2523, mode: `MaxEncodedLen`)
-	/// Storage: `Nfts::Account` (r:0 w:4)
-	/// Proof: `Nfts::Account` (`max_values`: None, `max_size`: Some(88), added: 2563, mode: `MaxEncodedLen`)
-	/// Storage: `Nfts::ItemPriceOf` (r:0 w:2)
-	/// Proof: `Nfts::ItemPriceOf` (`max_values`: None, `max_size`: Some(89), added: 2564, mode: `MaxEncodedLen`)
-	fn claim_swap() -> Weight {
-		// Proof Size summary in bytes:
-		//  Measured:  `834`
-		//  Estimated: `7662`
-		// Minimum execution time: 84_103_000 picoseconds.
-		Weight::from_parts(85_325_000, 7662)
-			.saturating_add(RocksDbWeight::get().reads(9_u64))
-			.saturating_add(RocksDbWeight::get().writes(10_u64))
 	}
 	/// Storage: `Nfts::CollectionRoleOf` (r:2 w:0)
 	/// Proof: `Nfts::CollectionRoleOf` (`max_values`: None, `max_size`: Some(69), added: 2544, mode: `MaxEncodedLen`)

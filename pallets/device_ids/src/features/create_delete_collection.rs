@@ -50,10 +50,10 @@ impl<T: Config<I>, I: 'static> Pallet<T, I> {
 			CollectionDetails {
 				owner: owner.clone(),
 				owner_deposit: deposit,
-				items: 0,
-				item_metadatas: 0,
-				item_configs: 0,
-				attributes: 0,
+				items_count: 0,
+				item_metadata_count: 0,
+				item_configs_count: 0,
+				attributes_count: 0,
 			},
 		);
 		CollectionRoleOf::<T, I>::insert(
@@ -108,14 +108,14 @@ impl<T: Config<I>, I: 'static> Pallet<T, I> {
 			if let Some(check_owner) = maybe_check_owner {
 				ensure!(collection_details.owner == check_owner, Error::<T, I>::NoPermission);
 			}
-			ensure!(collection_details.items == 0, Error::<T, I>::CollectionNotEmpty);
-			ensure!(collection_details.attributes == witness.attributes, Error::<T, I>::BadWitness);
+			ensure!(collection_details.items_count == 0, Error::<T, I>::CollectionNotEmpty);
+			ensure!(collection_details.attributes_count == witness.attributes_count, Error::<T, I>::BadWitness);
 			ensure!(
-				collection_details.item_metadatas == witness.item_metadatas,
+				collection_details.item_metadata_count == witness.item_metadata_count,
 				Error::<T, I>::BadWitness
 			);
 			ensure!(
-				collection_details.item_configs == witness.item_configs,
+				collection_details.item_configs_count == witness.item_configs_count,
 				Error::<T, I>::BadWitness
 			);
 
@@ -139,14 +139,14 @@ impl<T: Config<I>, I: 'static> Pallet<T, I> {
 			CollectionAccount::<T, I>::remove(&collection_details.owner, &collection);
 			T::Currency::unreserve(&collection_details.owner, collection_details.owner_deposit);
 			CollectionConfigOf::<T, I>::remove(&collection);
-			let _ = ItemConfigOf::<T, I>::clear_prefix(&collection, witness.item_configs, None);
+			let _ = ItemConfigOf::<T, I>::clear_prefix(&collection, witness.item_configs_count, None);
 
 			Self::deposit_event(Event::Destroyed { collection });
 
 			Ok(DestroyWitness {
-				item_metadatas: collection_details.item_metadatas,
-				item_configs: collection_details.item_configs,
-				attributes: collection_details.attributes,
+				item_metadata_count: collection_details.item_metadata_count,
+				item_configs_count: collection_details.item_configs_count,
+				attributes_count: collection_details.attributes_count,
 			})
 		})
 	}

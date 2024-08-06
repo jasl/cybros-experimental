@@ -91,7 +91,7 @@ impl<T: Config<I>, I: 'static> Pallet<T, I> {
 		let attribute = Attribute::<T, I>::get((collection, maybe_item, &namespace, &key));
 		let attribute_exists = attribute.is_some();
 		if !attribute_exists {
-			collection_details.attributes.saturating_inc();
+			collection_details.attributes_count.saturating_inc();
 		}
 
 		let old_deposit =
@@ -192,7 +192,7 @@ impl<T: Config<I>, I: 'static> Pallet<T, I> {
 				}
 			}
 		} else {
-			collection_details.attributes.saturating_inc();
+			collection_details.attributes_count.saturating_inc();
 		}
 
 		Attribute::<T, I>::insert(
@@ -339,7 +339,7 @@ impl<T: Config<I>, I: 'static> Pallet<T, I> {
 		let mut collection_details =
 			Collection::<T, I>::get(&collection).ok_or(Error::<T, I>::UnknownCollection)?;
 
-		collection_details.attributes.saturating_dec();
+		collection_details.attributes_count.saturating_dec();
 
 		match deposit.account {
 			Some(deposit_account) => {

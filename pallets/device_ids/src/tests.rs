@@ -23,7 +23,7 @@ use frame_support::{
 	assert_noop, assert_ok,
 	traits::{
 		tokens::nonfungibles_v2::{Create, Destroy, Inspect, Mutate},
-		Currency, Get,
+		Currency,
 	},
 };
 use pallet_balances::Error as BalancesError;
@@ -59,7 +59,7 @@ fn items() -> Vec<(AccountIdOf<Test>, u32, u32)> {
 	{
 		let details = Collection::<Test>::get(collection).unwrap();
 		let items = Item::<Test>::iter_prefix(collection).count() as u32;
-		assert_eq!(details.items, items);
+		assert_eq!(details.items_count, items);
 	}
 	r
 }
@@ -214,9 +214,9 @@ fn lifecycle_should_work() {
 		assert_eq!(Balances::reserved_balance(&account(1)), 7);
 		assert_ok!(DeviceIds::mint(RuntimeOrigin::signed(account(1)), 0, 70, account(1), None));
 		assert_eq!(items(), vec![(account(1), 0, 70), (account(10), 0, 42), (account(20), 0, 69)]);
-		assert_eq!(Collection::<Test>::get(0).unwrap().items, 3);
-		assert_eq!(Collection::<Test>::get(0).unwrap().item_metadatas, 0);
-		assert_eq!(Collection::<Test>::get(0).unwrap().item_configs, 3);
+		assert_eq!(Collection::<Test>::get(0).unwrap().items_count, 3);
+		assert_eq!(Collection::<Test>::get(0).unwrap().item_metadata_count, 0);
+		assert_eq!(Collection::<Test>::get(0).unwrap().item_configs_count, 3);
 
 		assert_eq!(Balances::reserved_balance(&account(1)), 8);
 		assert_ok!(DeviceIds::transfer(RuntimeOrigin::signed(account(1)), 0, 70, account(2)));
@@ -231,8 +231,8 @@ fn lifecycle_should_work() {
 		assert!(ItemMetadataOf::<Test>::contains_key(0, 69));
 		assert!(ItemConfigOf::<Test>::contains_key(0, 69));
 		let w = DeviceIds::get_destroy_witness(&0).unwrap();
-		assert_eq!(w.item_metadatas, 2);
-		assert_eq!(w.item_configs, 3);
+		assert_eq!(w.item_metadata_count, 2);
+		assert_eq!(w.item_configs_count, 3);
 		assert_noop!(
 			DeviceIds::destroy(RuntimeOrigin::signed(account(1)), 0, w),
 			Error::<Test>::CollectionNotEmpty
@@ -251,9 +251,9 @@ fn lifecycle_should_work() {
 		assert_ok!(DeviceIds::burn(RuntimeOrigin::root(), 0, 70));
 
 		let w = DeviceIds::get_destroy_witness(&0).unwrap();
-		assert_eq!(w.attributes, 1);
-		assert_eq!(w.item_metadatas, 0);
-		assert_eq!(w.item_configs, 0);
+		assert_eq!(w.attributes_count, 1);
+		assert_eq!(w.item_metadata_count, 0);
+		assert_eq!(w.item_configs_count, 0);
 		assert_ok!(DeviceIds::destroy(RuntimeOrigin::signed(account(1)), 0, w));
 		assert_eq!(Balances::reserved_balance(&account(1)), 0);
 
@@ -286,7 +286,7 @@ fn destroy_with_bad_witness_should_not_work() {
 			DeviceIds::destroy(
 				RuntimeOrigin::signed(account(1)),
 				0,
-				DestroyWitness { item_configs: 1, ..w }
+				DestroyWitness { item_configs_count: 1, ..w }
 			),
 			Error::<Test>::BadWitness
 		);
@@ -314,7 +314,7 @@ fn destroy_should_work() {
 		);
 		assert_ok!(DeviceIds::lock_item_transfer(RuntimeOrigin::signed(account(1)), 0, 42));
 		assert_ok!(DeviceIds::burn(RuntimeOrigin::signed(account(2)), 0, 42));
-		assert_eq!(Collection::<Test>::get(0).unwrap().item_configs, 1);
+		assert_eq!(Collection::<Test>::get(0).unwrap().item_configs_count, 1);
 		assert_eq!(ItemConfigOf::<Test>::iter_prefix(0).count() as u32, 1);
 		assert!(ItemConfigOf::<Test>::contains_key(0, 42));
 		assert_ok!(DeviceIds::destroy(
@@ -2344,369 +2344,6 @@ fn mint_settings_should_work() {
 }
 
 #[test]
-fn create_cancel_swap_should_work() {
-	new_test_ext().execute_with(|| {
-		System::set_block_number(1);
-		let user_id = account(1);
-		let collection_id = 0;
-		let item_1 = 1;
-		let item_2 = 2;
-		let price = 1;
-		let price_direction = PriceDirection::Receive;
-		let price_with_direction = PriceWithDirection { amount: price, direction: price_direction };
-		let duration = 2;
-		let expect_deadline = 3;
-
-		assert_ok!(DeviceIds::force_create(
-			RuntimeOrigin::root(),
-			user_id.clone(),
-			default_collection_config()
-		));
-
-		assert_ok!(DeviceIds::mint(
-			RuntimeOrigin::signed(user_id.clone()),
-			collection_id,
-			item_1,
-			user_id.clone(),
-			None,
-		));
-		assert_ok!(DeviceIds::mint(
-			RuntimeOrigin::signed(user_id.clone()),
-			collection_id,
-			item_2,
-			user_id.clone(),
-			None,
-		));
-
-		// validate desired item and the collection exists
-		assert_noop!(
-			DeviceIds::create_swap(
-				RuntimeOrigin::signed(user_id.clone()),
-				collection_id,
-				item_1,
-				collection_id,
-				Some(item_2 + 1),
-				Some(price_with_direction.clone()),
-				duration,
-			),
-			Error::<Test>::UnknownItem
-		);
-		assert_noop!(
-			DeviceIds::create_swap(
-				RuntimeOrigin::signed(user_id.clone()),
-				collection_id,
-				item_1,
-				collection_id + 1,
-				None,
-				Some(price_with_direction.clone()),
-				duration,
-			),
-			Error::<Test>::UnknownCollection
-		);
-
-		let max_duration: u64 = <Test as Config>::MaxDeadlineDuration::get();
-		assert_noop!(
-			DeviceIds::create_swap(
-				RuntimeOrigin::signed(user_id.clone()),
-				collection_id,
-				item_1,
-				collection_id,
-				Some(item_2),
-				Some(price_with_direction.clone()),
-				max_duration.saturating_add(1),
-			),
-			Error::<Test>::WrongDuration
-		);
-
-		assert_ok!(DeviceIds::create_swap(
-			RuntimeOrigin::signed(user_id.clone()),
-			collection_id,
-			item_1,
-			collection_id,
-			Some(item_2),
-			Some(price_with_direction.clone()),
-			duration,
-		));
-
-		let swap = PendingSwapOf::<Test>::get(collection_id, item_1).unwrap();
-		assert_eq!(swap.desired_collection, collection_id);
-		assert_eq!(swap.desired_item, Some(item_2));
-		assert_eq!(swap.price, Some(price_with_direction.clone()));
-		assert_eq!(swap.deadline, expect_deadline);
-
-		assert!(events().contains(&Event::<Test>::SwapCreated {
-			offered_collection: collection_id,
-			offered_item: item_1,
-			desired_collection: collection_id,
-			desired_item: Some(item_2),
-			price: Some(price_with_direction.clone()),
-			deadline: expect_deadline,
-		}));
-
-		// validate we can cancel the swap
-		assert_ok!(DeviceIds::cancel_swap(
-			RuntimeOrigin::signed(user_id.clone()),
-			collection_id,
-			item_1
-		));
-		assert!(events().contains(&Event::<Test>::SwapCancelled {
-			offered_collection: collection_id,
-			offered_item: item_1,
-			desired_collection: collection_id,
-			desired_item: Some(item_2),
-			price: Some(price_with_direction.clone()),
-			deadline: expect_deadline,
-		}));
-		assert!(!PendingSwapOf::<Test>::contains_key(collection_id, item_1));
-
-		// validate anyone can cancel the expired swap
-		assert_ok!(DeviceIds::create_swap(
-			RuntimeOrigin::signed(user_id.clone()),
-			collection_id,
-			item_1,
-			collection_id,
-			Some(item_2),
-			Some(price_with_direction.clone()),
-			duration,
-		));
-		assert_noop!(
-			DeviceIds::cancel_swap(RuntimeOrigin::signed(account(2)), collection_id, item_1),
-			Error::<Test>::NoPermission
-		);
-		System::set_block_number(expect_deadline + 1);
-		assert_ok!(DeviceIds::cancel_swap(RuntimeOrigin::signed(account(2)), collection_id, item_1));
-
-		// validate optional desired_item param
-		assert_ok!(DeviceIds::create_swap(
-			RuntimeOrigin::signed(user_id),
-			collection_id,
-			item_1,
-			collection_id,
-			None,
-			Some(price_with_direction),
-			duration,
-		));
-
-		let swap = PendingSwapOf::<Test>::get(collection_id, item_1).unwrap();
-		assert_eq!(swap.desired_item, None);
-	});
-}
-
-#[test]
-fn claim_swap_should_work() {
-	new_test_ext().execute_with(|| {
-		System::set_block_number(1);
-		let user_1 = account(1);
-		let user_2 = account(2);
-		let collection_id = 0;
-		let item_1 = 1;
-		let item_2 = 2;
-		let item_3 = 3;
-		let item_4 = 4;
-		let item_5 = 5;
-		let price = 100;
-		let price_direction = PriceDirection::Receive;
-		let price_with_direction =
-			PriceWithDirection { amount: price, direction: price_direction.clone() };
-		let duration = 2;
-		let initial_balance = 1000;
-		let deadline = 1 + duration;
-
-		Balances::make_free_balance_be(&user_1, initial_balance);
-		Balances::make_free_balance_be(&user_2, initial_balance);
-
-		assert_ok!(DeviceIds::force_create(
-			RuntimeOrigin::root(),
-			user_1.clone(),
-			default_collection_config()
-		));
-
-		assert_ok!(DeviceIds::mint(
-			RuntimeOrigin::signed(user_1.clone()),
-			collection_id,
-			item_1,
-			user_1.clone(),
-			None,
-		));
-		assert_ok!(DeviceIds::force_mint(
-			RuntimeOrigin::signed(user_1.clone()),
-			collection_id,
-			item_2,
-			user_2.clone(),
-			default_item_config(),
-		));
-		assert_ok!(DeviceIds::force_mint(
-			RuntimeOrigin::signed(user_1.clone()),
-			collection_id,
-			item_3,
-			user_2.clone(),
-			default_item_config(),
-		));
-		assert_ok!(DeviceIds::mint(
-			RuntimeOrigin::signed(user_1.clone()),
-			collection_id,
-			item_4,
-			user_1.clone(),
-			None,
-		));
-		assert_ok!(DeviceIds::force_mint(
-			RuntimeOrigin::signed(user_1.clone()),
-			collection_id,
-			item_5,
-			user_2.clone(),
-			default_item_config(),
-		));
-
-		assert_ok!(DeviceIds::create_swap(
-			RuntimeOrigin::signed(user_1.clone()),
-			collection_id,
-			item_1,
-			collection_id,
-			Some(item_2),
-			Some(price_with_direction.clone()),
-			duration,
-		));
-
-		// validate the deadline
-		System::set_block_number(5);
-		assert_noop!(
-			DeviceIds::claim_swap(
-				RuntimeOrigin::signed(user_2.clone()),
-				collection_id,
-				item_2,
-				collection_id,
-				item_1,
-				Some(price_with_direction.clone()),
-			),
-			Error::<Test>::DeadlineExpired
-		);
-		System::set_block_number(1);
-
-		// validate edge cases
-		assert_noop!(
-			DeviceIds::claim_swap(
-				RuntimeOrigin::signed(user_2.clone()),
-				collection_id,
-				item_2,
-				collection_id,
-				item_4, // no swap was created for that asset
-				Some(price_with_direction.clone()),
-			),
-			Error::<Test>::UnknownSwap
-		);
-		assert_noop!(
-			DeviceIds::claim_swap(
-				RuntimeOrigin::signed(user_2.clone()),
-				collection_id,
-				item_4, // not my item
-				collection_id,
-				item_1,
-				Some(price_with_direction.clone()),
-			),
-			Error::<Test>::NoPermission
-		);
-		assert_noop!(
-			DeviceIds::claim_swap(
-				RuntimeOrigin::signed(user_2.clone()),
-				collection_id,
-				item_5, // my item, but not the one another part wants
-				collection_id,
-				item_1,
-				Some(price_with_direction.clone()),
-			),
-			Error::<Test>::UnknownSwap
-		);
-		assert_noop!(
-			DeviceIds::claim_swap(
-				RuntimeOrigin::signed(user_2.clone()),
-				collection_id,
-				item_2,
-				collection_id,
-				item_1,
-				Some(PriceWithDirection { amount: price + 1, direction: price_direction.clone() }), // wrong price
-			),
-			Error::<Test>::UnknownSwap
-		);
-		assert_noop!(
-			DeviceIds::claim_swap(
-				RuntimeOrigin::signed(user_2.clone()),
-				collection_id,
-				item_2,
-				collection_id,
-				item_1,
-				Some(PriceWithDirection { amount: price, direction: PriceDirection::Send }), // wrong direction
-			),
-			Error::<Test>::UnknownSwap
-		);
-
-		assert_ok!(DeviceIds::claim_swap(
-			RuntimeOrigin::signed(user_2.clone()),
-			collection_id,
-			item_2,
-			collection_id,
-			item_1,
-			Some(price_with_direction.clone()),
-		));
-
-		// validate the new owner
-		let item = Item::<Test>::get(collection_id, item_1).unwrap();
-		assert_eq!(item.owner, user_2.clone());
-		let item = Item::<Test>::get(collection_id, item_2).unwrap();
-		assert_eq!(item.owner, user_1.clone());
-
-		// validate the balances
-		assert_eq!(Balances::total_balance(&user_1), initial_balance + price);
-		assert_eq!(Balances::total_balance(&user_2), initial_balance - price);
-
-		// ensure we reset the swap
-		assert!(!PendingSwapOf::<Test>::contains_key(collection_id, item_1));
-
-		// validate the event
-		assert!(events().contains(&Event::<Test>::SwapClaimed {
-			sent_collection: collection_id,
-			sent_item: item_2,
-			sent_item_owner: user_2.clone(),
-			received_collection: collection_id,
-			received_item: item_1,
-			received_item_owner: user_1.clone(),
-			price: Some(price_with_direction.clone()),
-			deadline,
-		}));
-
-		// validate the optional desired_item param and another price direction
-		let price_direction = PriceDirection::Send;
-		let price_with_direction = PriceWithDirection { amount: price, direction: price_direction };
-		Balances::make_free_balance_be(&user_1, initial_balance);
-		Balances::make_free_balance_be(&user_2, initial_balance);
-
-		assert_ok!(DeviceIds::create_swap(
-			RuntimeOrigin::signed(user_1.clone()),
-			collection_id,
-			item_4,
-			collection_id,
-			None,
-			Some(price_with_direction.clone()),
-			duration,
-		));
-		assert_ok!(DeviceIds::claim_swap(
-			RuntimeOrigin::signed(user_2.clone()),
-			collection_id,
-			item_1,
-			collection_id,
-			item_4,
-			Some(price_with_direction),
-		));
-		let item = Item::<Test>::get(collection_id, item_1).unwrap();
-		assert_eq!(item.owner, user_1);
-		let item = Item::<Test>::get(collection_id, item_4).unwrap();
-		assert_eq!(item.owner, user_2);
-
-		assert_eq!(Balances::total_balance(&user_1), initial_balance - price);
-		assert_eq!(Balances::total_balance(&user_2), initial_balance + price);
-	});
-}
-
-#[test]
 fn various_collection_settings() {
 	new_test_ext().execute_with(|| {
 		// when we set only one value it's required to call .into() on it
@@ -3520,7 +3157,7 @@ fn clear_collection_metadata_works() {
 		assert_ok!(DeviceIds::destroy(
 			RuntimeOrigin::signed(account(1)),
 			0,
-			DestroyWitness { item_configs: 0, item_metadatas: 0, attributes: 0 }
+			DestroyWitness { item_configs_count: 0, item_metadata_count: 0, attributes_count: 0 }
 		));
 		assert_eq!(Collection::<Test>::get(0), None);
 		assert_eq!(Balances::reserved_balance(&account(1)), 10);

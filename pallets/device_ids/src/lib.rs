@@ -339,18 +339,6 @@ pub mod pallet {
 		OptionQuery,
 	>;
 
-	/// A price of an item.
-	#[pallet::storage]
-	pub type ItemPriceOf<T: Config<I>, I: 'static = ()> = StorageDoubleMap<
-		_,
-		Blake2_128Concat,
-		T::CollectionId,
-		Blake2_128Concat,
-		T::ItemId,
-		(ItemPrice<T, I>, Option<T::AccountId>),
-		OptionQuery,
-	>;
-
 	/// Item attribute approvals.
 	#[pallet::storage]
 	pub type ItemAttributesApprovalsOf<T: Config<I>, I: 'static = ()> = StorageDoubleMap<
@@ -368,23 +356,6 @@ pub mod pallet {
 	#[pallet::storage]
 	pub type NextCollectionId<T: Config<I>, I: 'static = ()> =
 		StorageValue<_, T::CollectionId, OptionQuery>;
-
-	/// Handles all the pending swaps.
-	#[pallet::storage]
-	pub type PendingSwapOf<T: Config<I>, I: 'static = ()> = StorageDoubleMap<
-		_,
-		Blake2_128Concat,
-		T::CollectionId,
-		Blake2_128Concat,
-		T::ItemId,
-		PendingSwap<
-			T::CollectionId,
-			T::ItemId,
-			PriceWithDirection<ItemPrice<T, I>>,
-			BlockNumberFor<T>,
-		>,
-		OptionQuery,
-	>;
 
 	/// Config of a collection.
 	#[pallet::storage]
@@ -515,60 +486,6 @@ pub mod pallet {
 		CollectionMintSettingsUpdated { collection: T::CollectionId },
 		/// Event gets emitted when the `NextCollectionId` gets incremented.
 		NextCollectionIdIncremented { next_id: Option<T::CollectionId> },
-		/// The price was set for the item.
-		ItemPriceSet {
-			collection: T::CollectionId,
-			item: T::ItemId,
-			price: ItemPrice<T, I>,
-			whitelisted_buyer: Option<T::AccountId>,
-		},
-		/// The price for the item was removed.
-		ItemPriceRemoved { collection: T::CollectionId, item: T::ItemId },
-		/// An item was bought.
-		ItemBought {
-			collection: T::CollectionId,
-			item: T::ItemId,
-			price: ItemPrice<T, I>,
-			seller: T::AccountId,
-			buyer: T::AccountId,
-		},
-		/// A tip was sent.
-		TipSent {
-			collection: T::CollectionId,
-			item: T::ItemId,
-			sender: T::AccountId,
-			receiver: T::AccountId,
-			amount: DepositBalanceOf<T, I>,
-		},
-		/// An `item` swap intent was created.
-		SwapCreated {
-			offered_collection: T::CollectionId,
-			offered_item: T::ItemId,
-			desired_collection: T::CollectionId,
-			desired_item: Option<T::ItemId>,
-			price: Option<PriceWithDirection<ItemPrice<T, I>>>,
-			deadline: BlockNumberFor<T>,
-		},
-		/// The swap was cancelled.
-		SwapCancelled {
-			offered_collection: T::CollectionId,
-			offered_item: T::ItemId,
-			desired_collection: T::CollectionId,
-			desired_item: Option<T::ItemId>,
-			price: Option<PriceWithDirection<ItemPrice<T, I>>>,
-			deadline: BlockNumberFor<T>,
-		},
-		/// The swap has been claimed.
-		SwapClaimed {
-			sent_collection: T::CollectionId,
-			sent_item: T::ItemId,
-			sent_item_owner: T::AccountId,
-			received_collection: T::CollectionId,
-			received_item: T::ItemId,
-			received_item_owner: T::AccountId,
-			price: Option<PriceWithDirection<ItemPrice<T, I>>>,
-			deadline: BlockNumberFor<T>,
-		},
 		/// New attributes have been set for an `item` of the `collection`.
 		PreSignedAttributesSet {
 			collection: T::CollectionId,
@@ -629,16 +546,10 @@ pub mod pallet {
 		MaxSupplyTooSmall,
 		/// The given item ID is unknown.
 		UnknownItem,
-		/// Swap doesn't exist.
-		UnknownSwap,
 		/// The given item has no metadata set.
 		MetadataNotFound,
 		/// The provided attribute can't be found.
 		AttributeNotFound,
-		/// Item is not for sale.
-		NotForSale,
-		/// The provided bid is too low.
-		BidTooLow,
 		/// The item has reached its approval limit.
 		ReachedApprovalLimit,
 		/// The deadline has already expired.
@@ -785,14 +696,14 @@ pub mod pallet {
 		/// Emits `Destroyed` event when successful.
 		///
 		/// Weight: `O(m + c + a)` where:
-		/// - `m = witness.item_metadatas`
-		/// - `c = witness.item_configs`
-		/// - `a = witness.attributes`
+		/// - `m = witness.item_metadata_count`
+		/// - `c = witness.item_configs_count`
+		/// - `a = witness.attributes_count`
 		#[pallet::call_index(2)]
 		#[pallet::weight(T::WeightInfo::destroy(
-			witness.item_metadatas,
-			witness.item_configs,
-			witness.attributes,
+			witness.item_metadata_count,
+			witness.item_configs_count,
+			witness.attributes_count,
  		))]
 		pub fn destroy(
 			origin: OriginFor<T>,
@@ -805,9 +716,9 @@ pub mod pallet {
 			let details = Self::do_destroy_collection(collection, witness, maybe_check_owner)?;
 
 			Ok(Some(T::WeightInfo::destroy(
-				details.item_metadatas,
-				details.item_configs,
-				details.attributes,
+				details.item_metadata_count,
+				details.item_configs_count,
+				details.attributes_count,
 			))
 			.into())
 		}
@@ -1712,98 +1623,6 @@ pub mod pallet {
 				.map(|_| None)
 				.or_else(|origin| ensure_signed(origin).map(Some).map_err(DispatchError::from))?;
 			Self::do_update_mint_settings(maybe_check_origin, collection, mint_settings)
-		}
-
-		/// Register a new atomic swap, declaring an intention to send an `item` in exchange for
-		/// `desired_item` from origin to target on the current blockchain.
-		/// The target can execute the swap during the specified `duration` of blocks (if set).
-		/// Additionally, the price could be set for the desired `item`.
-		///
-		/// Origin must be Signed and must be an owner of the `item`.
-		///
-		/// - `collection`: The collection of the item.
-		/// - `item`: The item an owner wants to give.
-		/// - `desired_collection`: The collection of the desired item.
-		/// - `desired_item`: The desired item an owner wants to receive.
-		/// - `maybe_price`: The price an owner is willing to pay or receive for the desired `item`.
-		/// - `duration`: A deadline for the swap. Specified by providing the number of blocks
-		/// 	after which the swap will expire.
-		///
-		/// Emits `SwapCreated` on success.
-		#[pallet::call_index(34)]
-		#[pallet::weight(T::WeightInfo::create_swap())]
-		pub fn create_swap(
-			origin: OriginFor<T>,
-			offered_collection: T::CollectionId,
-			offered_item: T::ItemId,
-			desired_collection: T::CollectionId,
-			maybe_desired_item: Option<T::ItemId>,
-			maybe_price: Option<PriceWithDirection<ItemPrice<T, I>>>,
-			duration: BlockNumberFor<T>,
-		) -> DispatchResult {
-			let origin = ensure_signed(origin)?;
-			Self::do_create_swap(
-				origin,
-				offered_collection,
-				offered_item,
-				desired_collection,
-				maybe_desired_item,
-				maybe_price,
-				duration,
-			)
-		}
-
-		/// Cancel an atomic swap.
-		///
-		/// Origin must be Signed.
-		/// Origin must be an owner of the `item` if the deadline hasn't expired.
-		///
-		/// - `collection`: The collection of the item.
-		/// - `item`: The item an owner wants to give.
-		///
-		/// Emits `SwapCancelled` on success.
-		#[pallet::call_index(35)]
-		#[pallet::weight(T::WeightInfo::cancel_swap())]
-		pub fn cancel_swap(
-			origin: OriginFor<T>,
-			offered_collection: T::CollectionId,
-			offered_item: T::ItemId,
-		) -> DispatchResult {
-			let origin = ensure_signed(origin)?;
-			Self::do_cancel_swap(origin, offered_collection, offered_item)
-		}
-
-		/// Claim an atomic swap.
-		/// This method executes a pending swap, that was created by a counterpart before.
-		///
-		/// Origin must be Signed and must be an owner of the `item`.
-		///
-		/// - `send_collection`: The collection of the item to be sent.
-		/// - `send_item`: The item to be sent.
-		/// - `receive_collection`: The collection of the item to be received.
-		/// - `receive_item`: The item to be received.
-		/// - `witness_price`: A price that was previously agreed on.
-		///
-		/// Emits `SwapClaimed` on success.
-		#[pallet::call_index(36)]
-		#[pallet::weight(T::WeightInfo::claim_swap())]
-		pub fn claim_swap(
-			origin: OriginFor<T>,
-			send_collection: T::CollectionId,
-			send_item: T::ItemId,
-			receive_collection: T::CollectionId,
-			receive_item: T::ItemId,
-			witness_price: Option<PriceWithDirection<ItemPrice<T, I>>>,
-		) -> DispatchResult {
-			let origin = ensure_signed(origin)?;
-			Self::do_claim_swap(
-				origin,
-				send_collection,
-				send_item,
-				receive_collection,
-				receive_item,
-				witness_price,
-			)
 		}
 
 		/// Mint an item by providing the pre-signed approval.

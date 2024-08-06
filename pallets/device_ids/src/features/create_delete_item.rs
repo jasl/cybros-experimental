@@ -64,10 +64,10 @@ impl<T: Config<I>, I: 'static> Pallet<T, I> {
 				with_details_and_config(collection_details, &collection_config)?;
 
 				if let Some(max_supply) = collection_config.max_supply {
-					ensure!(collection_details.items < max_supply, Error::<T, I>::MaxSupplyReached);
+					ensure!(collection_details.items_count < max_supply, Error::<T, I>::MaxSupplyReached);
 				}
 
-				collection_details.items.saturating_inc();
+				collection_details.items_count.saturating_inc();
 
 				let collection_config = Self::get_collection_config(&collection)?;
 				let deposit_amount = match collection_config
@@ -88,7 +88,7 @@ impl<T: Config<I>, I: 'static> Pallet<T, I> {
 					ensure!(existing_config == item_config, Error::<T, I>::InconsistentItemConfig);
 				} else {
 					ItemConfigOf::<T, I>::insert(&collection, &item, item_config);
-					collection_details.item_configs.saturating_inc();
+					collection_details.item_configs_count.saturating_inc();
 				}
 
 				T::Currency::reserve(&deposit_account, deposit_amount)?;
@@ -230,10 +230,10 @@ impl<T: Config<I>, I: 'static> Pallet<T, I> {
 
 				// Return the deposit.
 				T::Currency::unreserve(&details.deposit.account, details.deposit.amount);
-				collection_details.items.saturating_dec();
+				collection_details.items_count.saturating_dec();
 
 				if remove_config {
-					collection_details.item_configs.saturating_dec();
+					collection_details.item_configs_count.saturating_dec();
 				}
 
 				// Clear the metadata if it's not locked.
@@ -243,7 +243,7 @@ impl<T: Config<I>, I: 'static> Pallet<T, I> {
 							metadata.deposit.account.unwrap_or(collection_details.owner.clone());
 
 						T::Currency::unreserve(&depositor_account, metadata.deposit.amount);
-						collection_details.item_metadatas.saturating_dec();
+						collection_details.item_metadata_count.saturating_dec();
 
 						if depositor_account == collection_details.owner {
 							collection_details
@@ -259,8 +259,6 @@ impl<T: Config<I>, I: 'static> Pallet<T, I> {
 
 		Item::<T, I>::remove(&collection, &item);
 		Account::<T, I>::remove((&owner, &collection, &item));
-		ItemPriceOf::<T, I>::remove(&collection, &item);
-		PendingSwapOf::<T, I>::remove(&collection, &item);
 		ItemAttributesApprovalsOf::<T, I>::remove(&collection, &item);
 
 		if remove_config {
