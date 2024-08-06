@@ -57,12 +57,11 @@ use frame_support::{
 	transactional,
 };
 use scale_codec::{Decode, Encode};
-use sp_core::{sr25519, H256, ByteArray};
+use sp_core::{sr25519, ByteArray, H256};
 use sp_io::crypto::sr25519_verify;
 use sp_runtime::{
-	DispatchError,
 	traits::{StaticLookup, Zero},
-	SaturatedConversion, Saturating,
+	DispatchError, SaturatedConversion, Saturating,
 };
 
 pub(crate) use frame_support::traits::{
@@ -82,10 +81,10 @@ pub type BalanceOf<T> =
 #[frame_support::pallet]
 mod pallet {
 	use super::*;
+	use core::fmt::Display;
 	use frame_support::pallet_prelude::*;
 	use frame_system::pallet_prelude::*;
 	use sp_runtime::traits::AtLeast32BitUnsigned;
-	use core::fmt::Display;
 
 	/// The current storage version.
 	const STORAGE_VERSION: StorageVersion = StorageVersion::new(1);
@@ -654,11 +653,7 @@ mod pallet {
 			let owner = T::RegisterImplOrigin::ensure_origin(origin)?;
 			let impl_id = NextImplId::<T>::get().unwrap_or(101u32.into());
 
-			Self::do_register_impl(
-				impl_id.clone(),
-				owner,
-				attestation_method,
-			)?;
+			Self::do_register_impl(impl_id.clone(), owner, attestation_method)?;
 
 			let next_impl_id = impl_id.increment();
 			NextImplId::<T>::set(next_impl_id);

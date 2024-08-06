@@ -17,8 +17,8 @@
 // along with Cybros.  If not, see <http://www.gnu.org/licenses/>.
 
 use crate::*;
-use frame_support::pallet_prelude::*;
 use core::cmp::Ordering;
+use frame_support::pallet_prelude::*;
 
 impl<T: Config> Pallet<T> {
 	pub fn do_register_impl(
@@ -42,11 +42,7 @@ impl<T: Config> Pallet<T> {
 		Impls::<T>::insert(&impl_id, impl_info);
 		AccountOwningImpls::<T>::insert(&owner, &impl_id, ());
 
-		Self::deposit_event(Event::ImplRegistered {
-			owner,
-			attestation_method,
-			impl_id,
-		});
+		Self::deposit_event(Event::ImplRegistered { owner, attestation_method, impl_id });
 		Ok(())
 	}
 

@@ -17,9 +17,9 @@
 // along with Cybros.  If not, see <http://www.gnu.org/licenses/>.
 
 use crate::*;
+use core::cmp::Ordering;
 use frame_support::pallet_prelude::*;
 use sp_runtime::{traits::Zero, Saturating};
-use core::cmp::Ordering;
 
 impl<T: Config> Pallet<T> {
 	pub(crate) fn do_create_pool(
@@ -31,10 +31,7 @@ impl<T: Config> Pallet<T> {
 		auto_destroy_processed_job_enabled: bool,
 	) -> DispatchResult {
 		ensure!(!Pools::<T>::contains_key(&pool_id), Error::<T>::PoolIdTaken);
-		ensure!(
-			PalletInfra::<T>::impl_exists(&impl_id),
-			Error::<T>::ImplNotFound
-		);
+		ensure!(PalletInfra::<T>::impl_exists(&impl_id), Error::<T>::ImplNotFound);
 
 		<T as Config>::Currency::hold(
 			&HoldReason::PoolCreationReserve.into(),

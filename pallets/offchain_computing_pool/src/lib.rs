@@ -70,9 +70,9 @@ pub type BalanceOf<T> =
 #[frame_support::pallet]
 pub mod pallet {
 	use super::*;
+	use core::fmt::Display;
 	use frame_support::pallet_prelude::*;
 	use frame_system::pallet_prelude::*;
-	use core::fmt::Display;
 
 	/// The current storage version.
 	const STORAGE_VERSION: StorageVersion = StorageVersion::new(1);
@@ -874,7 +874,11 @@ pub mod pallet {
 				ApplicableScope::Public => {},
 				ApplicableScope::AllowList => {
 					ensure!(
-						JobPolicyAuthorizedAccounts::<T>::contains_key((pool_id.clone(), policy_id.clone(), who.clone())),
+						JobPolicyAuthorizedAccounts::<T>::contains_key((
+							pool_id.clone(),
+							policy_id.clone(),
+							who.clone()
+						)),
 						Error::<T>::JobPolicyNotApplicable
 					)
 				},

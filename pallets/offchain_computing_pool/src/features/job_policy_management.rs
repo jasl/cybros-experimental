@@ -122,9 +122,11 @@ impl<T: Config> Pallet<T> {
 			Error::<T>::JobPolicyScopeNotAllowList
 		);
 
-		JobPolicyAuthorizedAccounts::<T>::remove(
-			(pool_id.clone(), policy_id.clone(), account.clone())
-		);
+		JobPolicyAuthorizedAccounts::<T>::remove((
+			pool_id.clone(),
+			policy_id.clone(),
+			account.clone(),
+		));
 
 		Self::deposit_event(Event::AccountRevoked { pool_id, policy_id, account });
 		Ok(())

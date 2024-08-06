@@ -24,10 +24,7 @@ use frame_support::{
 };
 use frame_system::EnsureSigned;
 use sp_core::{ConstBool, ConstU128, ConstU32, ConstU64};
-use sp_runtime::{
-	traits::IdentityLookup,
-	BuildStorage,
-};
+use sp_runtime::{traits::IdentityLookup, BuildStorage};
 
 type Block = frame_system::mocking::MockBlock<Test>;
 
