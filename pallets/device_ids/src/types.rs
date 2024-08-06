@@ -180,19 +180,6 @@ pub struct ItemMetadata<Deposit, StringLimit: Get<u32>> {
 	pub(super) data: BoundedVec<u8, StringLimit>,
 }
 
-/// Information about the tip.
-#[derive(Clone, Encode, Decode, Eq, PartialEq, RuntimeDebug, TypeInfo, MaxEncodedLen)]
-pub struct ItemTip<CollectionId, ItemId, AccountId, Amount> {
-	/// The collection of the item.
-	pub(super) collection: CollectionId,
-	/// An item of which the tip is sent for.
-	pub(super) item: ItemId,
-	/// A sender of the tip.
-	pub(super) receiver: AccountId,
-	/// An amount the sender is willing to tip.
-	pub(super) amount: Amount,
-}
-
 /// Information about the reserved attribute deposit.
 #[derive(Clone, Encode, Decode, Eq, PartialEq, RuntimeDebug, TypeInfo, MaxEncodedLen)]
 pub struct AttributeDeposit<DepositBalance, AccountId> {
@@ -209,24 +196,6 @@ pub struct ItemMetadataDeposit<DepositBalance, AccountId> {
 	pub(super) account: Option<AccountId>,
 	/// An amount that gets reserved.
 	pub(super) amount: DepositBalance,
-}
-
-/// Specifies whether the tokens will be sent or received.
-#[derive(Clone, Encode, Decode, Eq, PartialEq, RuntimeDebug, TypeInfo, MaxEncodedLen)]
-pub enum PriceDirection {
-	/// Tokens will be sent.
-	Send,
-	/// Tokens will be received.
-	Receive,
-}
-
-/// Holds the details about the price.
-#[derive(Clone, Encode, Decode, Eq, PartialEq, RuntimeDebug, TypeInfo, MaxEncodedLen)]
-pub struct PriceWithDirection<Amount> {
-	/// An amount.
-	pub(super) amount: Amount,
-	/// A direction (send or receive).
-	pub(super) direction: PriceDirection,
 }
 
 /// Support for up to 64 user-enabled features on a collection.
