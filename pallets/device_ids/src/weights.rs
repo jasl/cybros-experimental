@@ -84,7 +84,6 @@ pub trait WeightInfo {
 	fn update_mint_settings() -> Weight;
 	fn set_price() -> Weight;
 	fn buy_item() -> Weight;
-	fn pay_tips(n: u32, ) -> Weight;
 	fn create_swap() -> Weight;
 	fn cancel_swap() -> Weight;
 	fn claim_swap() -> Weight;
@@ -656,16 +655,6 @@ impl<T: frame_system::Config> WeightInfo for SubstrateWeight<T> {
 		Weight::from_parts(51_816_000, 4326)
 			.saturating_add(T::DbWeight::get().reads(6_u64))
 			.saturating_add(T::DbWeight::get().writes(5_u64))
-	}
-	/// The range of component `n` is `[0, 10]`.
-	fn pay_tips(n: u32, ) -> Weight {
-		// Proof Size summary in bytes:
-		//  Measured:  `0`
-		//  Estimated: `0`
-		// Minimum execution time: 2_203_000 picoseconds.
-		Weight::from_parts(3_710_869, 0)
-			// Standard Error: 8_094
-			.saturating_add(Weight::from_parts(2_201_869, 0).saturating_mul(n.into()))
 	}
 	/// Storage: `Nfts::Item` (r:2 w:0)
 	/// Proof: `Nfts::Item` (`max_values`: None, `max_size`: Some(861), added: 3336, mode: `MaxEncodedLen`)
@@ -1343,16 +1332,6 @@ impl WeightInfo for () {
 		Weight::from_parts(51_816_000, 4326)
 			.saturating_add(RocksDbWeight::get().reads(6_u64))
 			.saturating_add(RocksDbWeight::get().writes(5_u64))
-	}
-	/// The range of component `n` is `[0, 10]`.
-	fn pay_tips(n: u32, ) -> Weight {
-		// Proof Size summary in bytes:
-		//  Measured:  `0`
-		//  Estimated: `0`
-		// Minimum execution time: 2_203_000 picoseconds.
-		Weight::from_parts(3_710_869, 0)
-			// Standard Error: 8_094
-			.saturating_add(Weight::from_parts(2_201_869, 0).saturating_mul(n.into()))
 	}
 	/// Storage: `Nfts::Item` (r:2 w:0)
 	/// Proof: `Nfts::Item` (`max_values`: None, `max_size`: Some(861), added: 3336, mode: `MaxEncodedLen`)

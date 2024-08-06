@@ -23,38 +23,10 @@
 use crate::*;
 use frame_support::{
 	pallet_prelude::*,
-	traits::{Currency, ExistenceRequirement, ExistenceRequirement::KeepAlive},
+	traits::{Currency, ExistenceRequirement},
 };
 
 impl<T: Config<I>, I: 'static> Pallet<T, I> {
-	/// Pays the specified tips to the corresponding receivers.
-	///
-	/// This function is used to pay tips from the `sender` account to multiple receivers. The tips
-	/// are specified as a `BoundedVec` of `ItemTipOf` with a maximum length of `T::MaxTips`. For
-	/// each tip, the function transfers the `amount` to the `receiver` account. The sender is
-	/// responsible for ensuring the validity of the provided tips.
-	///
-	/// - `sender`: The account that pays the tips.
-	/// - `tips`: A `BoundedVec` containing the tips to be paid, where each tip contains the
-	///   `collection`, `item`, `receiver`, and `amount`.
-	pub(crate) fn do_pay_tips(
-		sender: T::AccountId,
-		tips: BoundedVec<ItemTipOf<T, I>, T::MaxTips>,
-	) -> DispatchResult {
-		for tip in tips {
-			let ItemTip { collection, item, receiver, amount } = tip;
-			T::Currency::transfer(&sender, &receiver, amount, KeepAlive)?;
-			Self::deposit_event(Event::TipSent {
-				collection,
-				item,
-				sender: sender.clone(),
-				receiver,
-				amount,
-			});
-		}
-		Ok(())
-	}
-
 	/// Sets the price and whitelists a buyer for an item in the specified collection.
 	///
 	/// This function is used to set the price and whitelist a buyer for an item in the

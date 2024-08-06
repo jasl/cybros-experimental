@@ -2622,61 +2622,6 @@ fn buy_item_should_work() {
 }
 
 #[test]
-fn pay_tips_should_work() {
-	new_test_ext().execute_with(|| {
-		let user_1 = account(1);
-		let user_2 = account(2);
-		let user_3 = account(3);
-		let collection_id = 0;
-		let item_id = 1;
-		let tip = 2;
-		let initial_balance = 100;
-
-		Balances::make_free_balance_be(&user_1, initial_balance);
-		Balances::make_free_balance_be(&user_2, initial_balance);
-		Balances::make_free_balance_be(&user_3, initial_balance);
-
-		assert_ok!(DeviceIds::pay_tips(
-			RuntimeOrigin::signed(user_1.clone()),
-			bvec![
-				ItemTip {
-					collection: collection_id,
-					item: item_id,
-					receiver: user_2.clone(),
-					amount: tip
-				},
-				ItemTip {
-					collection: collection_id,
-					item: item_id,
-					receiver: user_3.clone(),
-					amount: tip
-				},
-			]
-		));
-
-		assert_eq!(Balances::total_balance(&user_1), initial_balance - tip * 2);
-		assert_eq!(Balances::total_balance(&user_2), initial_balance + tip);
-		assert_eq!(Balances::total_balance(&user_3), initial_balance + tip);
-
-		let events = events();
-		assert!(events.contains(&Event::<Test>::TipSent {
-			collection: collection_id,
-			item: item_id,
-			sender: user_1.clone(),
-			receiver: user_2.clone(),
-			amount: tip,
-		}));
-		assert!(events.contains(&Event::<Test>::TipSent {
-			collection: collection_id,
-			item: item_id,
-			sender: user_1.clone(),
-			receiver: user_3.clone(),
-			amount: tip,
-		}));
-	});
-}
-
-#[test]
 fn create_cancel_swap_should_work() {
 	new_test_ext().execute_with(|| {
 		System::set_block_number(1);

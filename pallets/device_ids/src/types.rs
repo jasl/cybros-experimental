@@ -62,13 +62,6 @@ pub(super) type BalanceOf<T, I = ()> =
 	<<T as Config<I>>::Currency as Currency<<T as SystemConfig>::AccountId>>::Balance;
 /// A type alias to represent the price of an item.
 pub(super) type ItemPrice<T, I = ()> = BalanceOf<T, I>;
-/// A type alias for the tips held by a single item.
-pub(super) type ItemTipOf<T, I = ()> = ItemTip<
-	<T as Config<I>>::CollectionId,
-	<T as Config<I>>::ItemId,
-	<T as SystemConfig>::AccountId,
-	BalanceOf<T, I>,
->;
 /// A type alias for the settings configuration of a collection.
 pub(super) type CollectionConfigFor<T, I = ()> =
 	CollectionConfig<BalanceOf<T, I>, BlockNumberFor<T>, <T as Config<I>>::CollectionId>;

@@ -1760,23 +1760,6 @@ pub mod pallet {
 			Self::do_buy_item(collection, item, origin, bid_price)
 		}
 
-		/// Allows to pay the tips.
-		///
-		/// Origin must be Signed.
-		///
-		/// - `tips`: Tips array.
-		///
-		/// Emits `TipSent` on every tip transfer.
-		#[pallet::call_index(33)]
-		#[pallet::weight(T::WeightInfo::pay_tips(tips.len() as u32))]
-		pub fn pay_tips(
-			origin: OriginFor<T>,
-			tips: BoundedVec<ItemTipOf<T, I>, T::MaxTips>,
-		) -> DispatchResult {
-			let origin = ensure_signed(origin)?;
-			Self::do_pay_tips(origin, tips)
-		}
-
 		/// Register a new atomic swap, declaring an intention to send an `item` in exchange for
 		/// `desired_item` from origin to target on the current blockchain.
 		/// The target can execute the swap during the specified `duration` of blocks (if set).
