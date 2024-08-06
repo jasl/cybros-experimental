@@ -15,9 +15,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-//! This module contains helper functions for the approval logic implemented in the Device IDs pallet.
-//! The bitflag [`PalletFeature::Approvals`] needs to be set in [`Config::Features`] for NFTs
-//! to have the functionality defined in this module.
+//! This module contains helper functions for the approval logic implemented in the Device IDs
+//! pallet. The bitflag [`PalletFeature::Approvals`] needs to be set in [`Config::Features`] for
+//! NFTs to have the functionality defined in this module.
 
 use crate::*;
 use frame_support::pallet_prelude::*;
