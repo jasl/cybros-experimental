@@ -28,10 +28,7 @@ use frame_support::{
 };
 use pallet_balances::Error as BalancesError;
 use sp_core::{bounded::BoundedVec, Pair};
-use sp_runtime::{
-	traits::IdentifyAccount,
-	MultiSignature, MultiSigner,
-};
+use sp_runtime::{traits::IdentifyAccount, MultiSignature, MultiSigner};
 
 type AccountIdOf<Test> = <Test as frame_system::Config>::AccountId;
 
@@ -108,7 +105,9 @@ fn events() -> Vec<Event<Test>> {
 	let result = System::events()
 		.into_iter()
 		.map(|r| r.event)
-		.filter_map(|e| if let mock::RuntimeEvent::DeviceIds(inner) = e { Some(inner) } else { None })
+		.filter_map(
+			|e| if let mock::RuntimeEvent::DeviceIds(inner) = e { Some(inner) } else { None },
+		)
 		.collect::<Vec<_>>();
 
 	System::reset_events();
@@ -223,10 +222,20 @@ fn lifecycle_should_work() {
 		assert_eq!(Balances::reserved_balance(&account(1)), 8);
 		assert_eq!(Balances::reserved_balance(&account(2)), 0);
 
-		assert_ok!(DeviceIds::set_metadata(RuntimeOrigin::signed(account(1)), 0, 42, bvec![42, 42]));
+		assert_ok!(DeviceIds::set_metadata(
+			RuntimeOrigin::signed(account(1)),
+			0,
+			42,
+			bvec![42, 42]
+		));
 		assert_eq!(Balances::reserved_balance(&account(1)), 11);
 		assert!(ItemMetadataOf::<Test>::contains_key(0, 42));
-		assert_ok!(DeviceIds::set_metadata(RuntimeOrigin::signed(account(1)), 0, 69, bvec![69, 69]));
+		assert_ok!(DeviceIds::set_metadata(
+			RuntimeOrigin::signed(account(1)),
+			0,
+			69,
+			bvec![69, 69]
+		));
 		assert_eq!(Balances::reserved_balance(&account(1)), 14);
 		assert!(ItemMetadataOf::<Test>::contains_key(0, 69));
 		assert!(ItemConfigOf::<Test>::contains_key(0, 69));
@@ -647,7 +656,12 @@ fn transfer_owner_should_work() {
 		));
 		assert_ok!(DeviceIds::mint(RuntimeOrigin::signed(account(1)), 0, 42, account(1), None));
 		assert_eq!(Balances::reserved_balance(&account(1)), 1);
-		assert_ok!(DeviceIds::set_metadata(RuntimeOrigin::signed(account(1)), 0, 42, bvec![0u8; 20]));
+		assert_ok!(DeviceIds::set_metadata(
+			RuntimeOrigin::signed(account(1)),
+			0,
+			42,
+			bvec![0u8; 20]
+		));
 		assert_ok!(DeviceIds::set_accept_ownership(RuntimeOrigin::signed(account(3)), Some(0)));
 		assert_ok!(DeviceIds::transfer_ownership(RuntimeOrigin::signed(account(2)), 0, account(3)));
 		assert_eq!(collections(), vec![(account(3), 0)]);
@@ -745,7 +759,11 @@ fn set_collection_metadata_should_work() {
 	new_test_ext().execute_with(|| {
 		// Cannot add metadata to unknown item
 		assert_noop!(
-			DeviceIds::set_collection_metadata(RuntimeOrigin::signed(account(1)), 0, bvec![0u8; 20]),
+			DeviceIds::set_collection_metadata(
+				RuntimeOrigin::signed(account(1)),
+				0,
+				bvec![0u8; 20]
+			),
 			Error::<Test>::NoPermission,
 		);
 		assert_ok!(DeviceIds::force_create(
@@ -755,7 +773,11 @@ fn set_collection_metadata_should_work() {
 		));
 		// Cannot add metadata to unowned item
 		assert_noop!(
-			DeviceIds::set_collection_metadata(RuntimeOrigin::signed(account(2)), 0, bvec![0u8; 20]),
+			DeviceIds::set_collection_metadata(
+				RuntimeOrigin::signed(account(2)),
+				0,
+				bvec![0u8; 20]
+			),
 			Error::<Test>::NoPermission,
 		);
 
@@ -788,7 +810,11 @@ fn set_collection_metadata_should_work() {
 
 		// Cannot over-reserve
 		assert_noop!(
-			DeviceIds::set_collection_metadata(RuntimeOrigin::signed(account(1)), 0, bvec![0u8; 40]),
+			DeviceIds::set_collection_metadata(
+				RuntimeOrigin::signed(account(1)),
+				0,
+				bvec![0u8; 40]
+			),
 			BalancesError::<Test, _>::InsufficientBalance,
 		);
 
@@ -804,7 +830,11 @@ fn set_collection_metadata_should_work() {
 			CollectionSettings::from_disabled(CollectionSetting::UnlockedMetadata.into())
 		));
 		assert_noop!(
-			DeviceIds::set_collection_metadata(RuntimeOrigin::signed(account(1)), 0, bvec![0u8; 15]),
+			DeviceIds::set_collection_metadata(
+				RuntimeOrigin::signed(account(1)),
+				0,
+				bvec![0u8; 15]
+			),
 			Error::<Test, _>::LockedCollectionMetadata,
 		);
 		assert_noop!(
@@ -850,7 +880,12 @@ fn set_item_metadata_should_work() {
 		);
 
 		// Successfully add metadata and take deposit
-		assert_ok!(DeviceIds::set_metadata(RuntimeOrigin::signed(account(1)), 0, 42, bvec![0u8; 20]));
+		assert_ok!(DeviceIds::set_metadata(
+			RuntimeOrigin::signed(account(1)),
+			0,
+			42,
+			bvec![0u8; 20]
+		));
 		assert_eq!(Balances::free_balance(&account(1)), 8);
 		assert!(ItemMetadataOf::<Test>::contains_key(0, 42));
 
@@ -858,9 +893,19 @@ fn set_item_metadata_should_work() {
 		assert_ok!(DeviceIds::set_metadata(RuntimeOrigin::root(), 0, 42, bvec![0u8; 18]));
 
 		// Update deposit
-		assert_ok!(DeviceIds::set_metadata(RuntimeOrigin::signed(account(1)), 0, 42, bvec![0u8; 15]));
+		assert_ok!(DeviceIds::set_metadata(
+			RuntimeOrigin::signed(account(1)),
+			0,
+			42,
+			bvec![0u8; 15]
+		));
 		assert_eq!(Balances::free_balance(&account(1)), 13);
-		assert_ok!(DeviceIds::set_metadata(RuntimeOrigin::signed(account(1)), 0, 42, bvec![0u8; 25]));
+		assert_ok!(DeviceIds::set_metadata(
+			RuntimeOrigin::signed(account(1)),
+			0,
+			42,
+			bvec![0u8; 25]
+		));
 		assert_eq!(Balances::free_balance(&account(1)), 3);
 
 		// Cannot over-reserve
@@ -870,7 +915,12 @@ fn set_item_metadata_should_work() {
 		);
 
 		// Can't set or clear metadata once frozen
-		assert_ok!(DeviceIds::set_metadata(RuntimeOrigin::signed(account(1)), 0, 42, bvec![0u8; 15]));
+		assert_ok!(DeviceIds::set_metadata(
+			RuntimeOrigin::signed(account(1)),
+			0,
+			42,
+			bvec![0u8; 15]
+		));
 		assert_ok!(DeviceIds::lock_item_properties(
 			RuntimeOrigin::signed(account(1)),
 			0,
@@ -1394,12 +1444,14 @@ fn validate_deposit_required_setting() {
 			bvec![2],
 			bvec![0],
 		));
-		assert_ok!(<DeviceIds as Mutate<<Test as SystemConfig>::AccountId, ItemConfig>>::set_attribute(
-			&0,
-			&0,
-			&[3],
-			&[0],
-		));
+		assert_ok!(
+			<DeviceIds as Mutate<<Test as SystemConfig>::AccountId, ItemConfig>>::set_attribute(
+				&0,
+				&0,
+				&[3],
+				&[0],
+			)
+		);
 		assert_eq!(
 			attributes(0),
 			vec![
@@ -1478,7 +1530,11 @@ fn set_attribute_should_respect_lock() {
 		);
 		assert_eq!(Balances::reserved_balance(account(1)), 11);
 
-		assert_ok!(DeviceIds::set_collection_metadata(RuntimeOrigin::signed(account(1)), 0, bvec![]));
+		assert_ok!(DeviceIds::set_collection_metadata(
+			RuntimeOrigin::signed(account(1)),
+			0,
+			bvec![]
+		));
 		assert_ok!(DeviceIds::lock_collection(
 			RuntimeOrigin::signed(account(1)),
 			0,
@@ -1554,7 +1610,13 @@ fn preserve_config_for_frozen_items() {
 		assert!(!ItemConfigOf::<Test>::contains_key(0, 1));
 
 		// lock the item and ensure the config stays unchanged
-		assert_ok!(DeviceIds::lock_item_properties(RuntimeOrigin::signed(account(1)), 0, 0, true, true));
+		assert_ok!(DeviceIds::lock_item_properties(
+			RuntimeOrigin::signed(account(1)),
+			0,
+			0,
+			true,
+			true
+		));
 
 		let expect_config = item_config_from_disabled_settings(
 			ItemSetting::UnlockedAttributes | ItemSetting::UnlockedMetadata,
@@ -1633,8 +1695,18 @@ fn force_update_collection_should_work() {
 			account(2),
 			default_item_config(),
 		));
-		assert_ok!(DeviceIds::set_metadata(RuntimeOrigin::signed(account(1)), 0, 142, bvec![0; 20]));
-		assert_ok!(DeviceIds::set_metadata(RuntimeOrigin::signed(account(1)), 0, 169, bvec![0; 20]));
+		assert_ok!(DeviceIds::set_metadata(
+			RuntimeOrigin::signed(account(1)),
+			0,
+			142,
+			bvec![0; 20]
+		));
+		assert_ok!(DeviceIds::set_metadata(
+			RuntimeOrigin::signed(account(1)),
+			0,
+			169,
+			bvec![0; 20]
+		));
 
 		Balances::make_free_balance_be(&account(5), 100);
 		assert_ok!(DeviceIds::force_collection_owner(RuntimeOrigin::root(), 0, account(5)));
@@ -1867,7 +1939,12 @@ fn cancel_approval_works() {
 			Error::<Test>::NotDelegate
 		);
 
-		assert_ok!(DeviceIds::cancel_approval(RuntimeOrigin::signed(account(2)), 0, 42, account(3)));
+		assert_ok!(DeviceIds::cancel_approval(
+			RuntimeOrigin::signed(account(2)),
+			0,
+			42,
+			account(3)
+		));
 		assert_noop!(
 			DeviceIds::cancel_approval(RuntimeOrigin::signed(account(2)), 0, 42, account(3)),
 			Error::<Test>::NotDelegate
@@ -1897,7 +1974,12 @@ fn cancel_approval_works() {
 
 		System::set_block_number(current_block + 3);
 		// 5 can cancel the approval since the deadline has passed.
-		assert_ok!(DeviceIds::cancel_approval(RuntimeOrigin::signed(account(5)), 0, 42, account(3)));
+		assert_ok!(DeviceIds::cancel_approval(
+			RuntimeOrigin::signed(account(5)),
+			0,
+			42,
+			account(3)
+		));
 		assert_eq!(approvals(0, 69), vec![]);
 	});
 }
@@ -1985,7 +2067,13 @@ fn approvals_limit_works() {
 		}
 		// the limit is 10
 		assert_noop!(
-			DeviceIds::approve_transfer(RuntimeOrigin::signed(account(2)), 0, 42, account(14), None),
+			DeviceIds::approve_transfer(
+				RuntimeOrigin::signed(account(2)),
+				0,
+				42,
+				account(14),
+				None
+			),
 			Error::<Test>::ReachedApprovalLimit
 		);
 	});
@@ -2079,7 +2167,12 @@ fn cancel_approval_works_with_admin() {
 			Error::<Test>::NotDelegate
 		);
 
-		assert_ok!(DeviceIds::cancel_approval(RuntimeOrigin::signed(account(2)), 0, 42, account(3)));
+		assert_ok!(DeviceIds::cancel_approval(
+			RuntimeOrigin::signed(account(2)),
+			0,
+			42,
+			account(3)
+		));
 		assert_noop!(
 			DeviceIds::cancel_approval(RuntimeOrigin::signed(account(2)), 0, 42, account(1)),
 			Error::<Test>::NotDelegate
@@ -2167,7 +2260,11 @@ fn clear_all_transfer_approvals_works() {
 			Error::<Test>::NoPermission
 		);
 
-		assert_ok!(DeviceIds::clear_all_transfer_approvals(RuntimeOrigin::signed(account(2)), 0, 42));
+		assert_ok!(DeviceIds::clear_all_transfer_approvals(
+			RuntimeOrigin::signed(account(2)),
+			0,
+			42
+		));
 
 		assert!(events().contains(&Event::<Test>::AllApprovalsCancelled {
 			collection: 0,

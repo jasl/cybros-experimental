@@ -20,7 +20,6 @@
 use super::*;
 use crate::macros::*;
 use alloc::{vec, vec::Vec};
-use scale_codec::EncodeLike;
 use enumflags2::{bitflags, BitFlags};
 use frame_support::{
 	pallet_prelude::{BoundedVec, MaxEncodedLen},
@@ -28,6 +27,7 @@ use frame_support::{
 	BoundedBTreeMap, BoundedBTreeSet,
 };
 use frame_system::pallet_prelude::BlockNumberFor;
+use scale_codec::EncodeLike;
 use scale_info::{build::Fields, meta_type, Path, Type, TypeInfo, TypeParameter};
 
 /// A type alias for handling balance deposits.

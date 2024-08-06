@@ -44,12 +44,12 @@ pub mod weights;
 extern crate alloc;
 
 use alloc::{boxed::Box, vec, vec::Vec};
-use scale_codec::{Decode, Encode};
 use frame_support::traits::{
 	tokens::Locker, BalanceStatus::Reserved, Currency, EnsureOriginWithArg, Incrementable,
 	ReservableCurrency,
 };
 use frame_system::Config as SystemConfig;
+use scale_codec::{Decode, Encode};
 use sp_runtime::{
 	traits::{IdentifyAccount, Saturating, StaticLookup, Verify, Zero},
 	RuntimeDebug,
@@ -990,10 +990,10 @@ pub mod pallet {
 					if T::Currency::reserve(&details.deposit.account, deposit - old).is_err() {
 						// NOTE: No alterations made to collection_details in this iteration so far,
 						// so this is OK to do.
-						continue
+						continue;
 					}
 				} else {
-					continue
+					continue;
 				}
 				details.deposit.amount = deposit;
 				Item::<T, I>::insert(&collection, &item, &details);

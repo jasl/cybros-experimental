@@ -109,7 +109,10 @@ impl<T: Config<I>, I: 'static> Pallet<T, I> {
 				ensure!(collection_details.owner == check_owner, Error::<T, I>::NoPermission);
 			}
 			ensure!(collection_details.items_count == 0, Error::<T, I>::CollectionNotEmpty);
-			ensure!(collection_details.attributes_count == witness.attributes_count, Error::<T, I>::BadWitness);
+			ensure!(
+				collection_details.attributes_count == witness.attributes_count,
+				Error::<T, I>::BadWitness
+			);
 			ensure!(
 				collection_details.item_metadata_count == witness.item_metadata_count,
 				Error::<T, I>::BadWitness
@@ -139,7 +142,8 @@ impl<T: Config<I>, I: 'static> Pallet<T, I> {
 			CollectionAccount::<T, I>::remove(&collection_details.owner, &collection);
 			T::Currency::unreserve(&collection_details.owner, collection_details.owner_deposit);
 			CollectionConfigOf::<T, I>::remove(&collection);
-			let _ = ItemConfigOf::<T, I>::clear_prefix(&collection, witness.item_configs_count, None);
+			let _ =
+				ItemConfigOf::<T, I>::clear_prefix(&collection, witness.item_configs_count, None);
 
 			Self::deposit_event(Event::Destroyed { collection });
 

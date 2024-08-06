@@ -64,7 +64,10 @@ impl<T: Config<I>, I: 'static> Pallet<T, I> {
 				with_details_and_config(collection_details, &collection_config)?;
 
 				if let Some(max_supply) = collection_config.max_supply {
-					ensure!(collection_details.items_count < max_supply, Error::<T, I>::MaxSupplyReached);
+					ensure!(
+						collection_details.items_count < max_supply,
+						Error::<T, I>::MaxSupplyReached
+					);
 				}
 
 				collection_details.items_count.saturating_inc();
