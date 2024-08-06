@@ -447,8 +447,6 @@ impl ItemConfig {
 #[repr(u64)]
 #[derive(Copy, Clone, RuntimeDebug, PartialEq, Eq, Encode, Decode, MaxEncodedLen, TypeInfo)]
 pub enum PalletFeature {
-	/// Enable/disable trading operations.
-	Trading,
 	/// Allow/disallow setting attributes.
 	Attributes,
 	/// Allow/disallow transfer approvals.

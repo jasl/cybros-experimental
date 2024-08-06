@@ -1714,52 +1714,6 @@ pub mod pallet {
 			Self::do_update_mint_settings(maybe_check_origin, collection, mint_settings)
 		}
 
-		/// Set (or reset) the price for an item.
-		///
-		/// Origin must be Signed and must be the owner of the `item`.
-		///
-		/// - `collection`: The collection of the item.
-		/// - `item`: The item to set the price for.
-		/// - `price`: The price for the item. Pass `None`, to reset the price.
-		/// - `buyer`: Restricts the buy operation to a specific account.
-		///
-		/// Emits `ItemPriceSet` on success if the price is not `None`.
-		/// Emits `ItemPriceRemoved` on success if the price is `None`.
-		#[pallet::call_index(31)]
-		#[pallet::weight(T::WeightInfo::set_price())]
-		pub fn set_price(
-			origin: OriginFor<T>,
-			collection: T::CollectionId,
-			item: T::ItemId,
-			price: Option<ItemPrice<T, I>>,
-			whitelisted_buyer: Option<AccountIdLookupOf<T>>,
-		) -> DispatchResult {
-			let origin = ensure_signed(origin)?;
-			let whitelisted_buyer = whitelisted_buyer.map(T::Lookup::lookup).transpose()?;
-			Self::do_set_price(collection, item, origin, price, whitelisted_buyer)
-		}
-
-		/// Allows to buy an item if it's up for sale.
-		///
-		/// Origin must be Signed and must not be the owner of the `item`.
-		///
-		/// - `collection`: The collection of the item.
-		/// - `item`: The item the sender wants to buy.
-		/// - `bid_price`: The price the sender is willing to pay.
-		///
-		/// Emits `ItemBought` on success.
-		#[pallet::call_index(32)]
-		#[pallet::weight(T::WeightInfo::buy_item())]
-		pub fn buy_item(
-			origin: OriginFor<T>,
-			collection: T::CollectionId,
-			item: T::ItemId,
-			bid_price: ItemPrice<T, I>,
-		) -> DispatchResult {
-			let origin = ensure_signed(origin)?;
-			Self::do_buy_item(collection, item, origin, bid_price)
-		}
-
 		/// Register a new atomic swap, declaring an intention to send an `item` in exchange for
 		/// `desired_item` from origin to target on the current blockchain.
 		/// The target can execute the swap during the specified `duration` of blocks (if set).
