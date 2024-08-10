@@ -1,30 +1,9 @@
-// This file is part of Substrate.
-
-// Copyright (C) Parity Technologies (UK) Ltd.
-// SPDX-License-Identifier: Apache-2.0
-
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-// 	http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
-//! Test environment for Device IDs pallet.
-
-use crate as pallet_device_ids;
-use pallet_device_ids::PalletFeatures;
+use crate as pallet_computable_workers;
 
 use frame_support::{
 	construct_runtime, derive_impl, parameter_types,
 	traits::{AsEnsureOriginWithArg, ConstU32, ConstU64},
 };
-use sp_keystore::{testing::MemoryKeystore, KeystoreExt};
 use sp_runtime::{
 	traits::{IdentifyAccount, IdentityLookup, Verify},
 	BuildStorage, MultiSignature,
@@ -36,11 +15,13 @@ pub type Signature = MultiSignature;
 pub type AccountPublic = <Signature as Verify>::Signer;
 pub type AccountId = <AccountPublic as IdentifyAccount>::AccountId;
 
+// Configure a mock runtime to test the pallet.
 construct_runtime!(
 	pub enum Test {
 		System: frame_system,
 		Balances: pallet_balances,
 		DeviceIds: pallet_device_ids,
+		ComputableWorkers: pallet_computable_workers,
 	}
 );
 
@@ -58,7 +39,7 @@ impl pallet_balances::Config for Test {
 }
 
 parameter_types! {
-	pub storage Features: PalletFeatures = PalletFeatures::all_enabled();
+	pub storage Features: pallet_device_ids::PalletFeatures = pallet_device_ids::PalletFeatures::all_enabled();
 }
 
 impl pallet_device_ids::Config for Test {
@@ -93,11 +74,12 @@ impl pallet_device_ids::Config for Test {
 	type WeightInfo = ();
 }
 
-pub(crate) fn new_test_ext() -> sp_io::TestExternalities {
-	let t = frame_system::GenesisConfig::<Test>::default().build_storage().unwrap();
+impl pallet_computable_workers::Config for Test {
+	type RuntimeEvent = RuntimeEvent;
+	type WeightInfo = ();
+}
 
-	let mut ext = sp_io::TestExternalities::new(t);
-	ext.register_extension(KeystoreExt::new(MemoryKeystore::new()));
-	ext.execute_with(|| System::set_block_number(1));
-	ext
+// Build genesis storage according to the mock runtime.
+pub fn new_test_ext() -> sp_io::TestExternalities {
+	frame_system::GenesisConfig::<Test>::default().build_storage().unwrap().into()
 }

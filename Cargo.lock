@@ -6699,6 +6699,22 @@ dependencies = [
 ]
 
 [[package]]
+name = "pallet-computable_workers"
+version = "0.0.1-dev"
+dependencies = [
+ "frame-benchmarking",
+ "frame-support",
+ "frame-system",
+ "pallet-balances",
+ "pallet-device_ids",
+ "parity-scale-codec",
+ "scale-info",
+ "sp-core",
+ "sp-io",
+ "sp-runtime",
+]
+
+[[package]]
 name = "pallet-conviction-voting"
 version = "28.0.0"
 source = "git+https://github.com/paritytech/polkadot-sdk.git?branch=master#149c70938f2b29f8d92ba1cc952aeb63d4084e27"
