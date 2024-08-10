@@ -17,8 +17,8 @@
 
 //! Test environment for Device IDs pallet.
 
-use super::*;
 use crate as pallet_device_ids;
+use pallet_device_ids::PalletFeatures;
 
 use frame_support::{
 	construct_runtime, derive_impl, parameter_types,
@@ -33,8 +33,7 @@ use sp_runtime::{
 type Block = frame_system::mocking::MockBlock<Test>;
 
 construct_runtime!(
-	pub enum Test
-	{
+	pub enum Test {
 		System: frame_system,
 		Balances: pallet_balances,
 		DeviceIds: pallet_device_ids,
@@ -62,7 +61,7 @@ parameter_types! {
 	pub storage Features: PalletFeatures = PalletFeatures::all_enabled();
 }
 
-impl Config for Test {
+impl pallet_device_ids::Config for Test {
 	type RuntimeEvent = RuntimeEvent;
 	type CollectionId = u32;
 	type ItemId = u32;
