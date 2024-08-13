@@ -35,7 +35,7 @@ mod common_functions;
 /// features, make sure to set appropriate bitflags for [`Config::Features`] in your runtime
 /// configuration trait.
 mod features;
-mod impl_nonfungibles;
+mod nonfungibles_impl;
 mod types;
 
 pub mod macros;

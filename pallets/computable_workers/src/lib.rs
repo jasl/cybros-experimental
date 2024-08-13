@@ -56,6 +56,7 @@ mod mock;
 mod tests;
 
 pub mod weights;
+pub use weights::WeightInfo;
 
 #[cfg(feature = "runtime-benchmarks")]
 mod benchmarking;
@@ -68,7 +69,12 @@ mod benchmarking;
 // <https://paritytech.github.io/polkadot-sdk/master/frame_support/pallet_macros/index.html>
 #[frame_support::pallet]
 pub mod pallet {
-	use frame_support::{dispatch::DispatchResultWithPostInfo, pallet_prelude::*, DefaultNoBound};
+	use frame_support::{
+		pallet_prelude::*,
+		dispatch::DispatchResultWithPostInfo,
+		traits::nonfungibles_v2::{Inspect, Mutate},
+		DefaultNoBound,
+	};
 	use frame_system::pallet_prelude::*;
 	use sp_runtime::traits::{CheckedAdd, One};
 
@@ -80,7 +86,9 @@ pub mod pallet {
 		type RuntimeEvent: From<Event<Self>> + IsType<<Self as frame_system::Config>::RuntimeEvent>;
 
 		/// A type representing the weights required by the dispatchables of this pallet.
-		type WeightInfo: crate::weights::WeightInfo;
+		type WeightInfo: crate::WeightInfo;
+
+		type DeviceIdRepository: Inspect<Self::AccountId> + Mutate<Self::AccountId, pallet_device_ids::ItemConfig>;
 	}
 
 	#[pallet::pallet]
@@ -181,6 +189,19 @@ pub mod pallet {
 					Ok(().into())
 				},
 			}
+		}
+
+		#[pallet::call_index(2)]
+		#[pallet::weight(Weight::from_parts(10_000, 0) + T::DbWeight::get().reads_writes(1,1))]
+		pub fn create_(
+			origin: OriginFor<T>,
+			collection: <T::DeviceIdRepository as Inspect<T::AccountId>>::CollectionId
+		) -> DispatchResultWithPostInfo {
+			let _who = ensure_signed(origin)?;
+
+			T::DeviceIdRepository::collection_attribute(&collection, "foo".as_bytes());
+
+			Ok(().into())
 		}
 	}
 }

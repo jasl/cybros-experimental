@@ -358,6 +358,7 @@ pub mod pallet {
 		JobAlreadyAssigned,
 		UnsupportedImplSpecVersion,
 		InvalidImplSpecVersionRange,
+		PreemptionNotEnabled,
 	}
 
 	#[pallet::composite_enum]
@@ -557,6 +558,15 @@ pub mod pallet {
 		),
 		(),
 		OptionQuery,
+	>;
+
+	#[pallet::storage]
+	pub type Dispatchers<T: Config> = StorageMap<
+		_,
+		Blake2_128Concat,
+		T::PoolId,
+		T::AccountId,
+		OptionQuery
 	>;
 
 	#[pallet::storage]

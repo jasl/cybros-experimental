@@ -76,6 +76,7 @@ impl pallet_device_ids::Config for Test {
 
 impl pallet_computable_workers::Config for Test {
 	type RuntimeEvent = RuntimeEvent;
+	type DeviceIdRepository = DeviceIds;
 	type WeightInfo = ();
 }
 

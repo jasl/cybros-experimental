@@ -30,6 +30,12 @@ impl<T: Config> Pallet<T> {
 		processing: bool,
 		expires_in: u64,
 	) -> DispatchResult {
+		let pool_info = Pools::<T>::get(pool_id.clone()).ok_or(Error::<T>::PoolNotFound)?;
+		ensure!(
+			pool_info.job_scheduler == JobScheduler::Preemption,
+			Error::<T>::PreemptionNotEnabled
+		);
+
 		Self::ensure_subscribed_worker(&pool_id, &worker)?;
 		let worker_info =
 			PalletInfra::<T>::worker_info(&worker).ok_or(Error::<T>::WorkerNotFound)?;
