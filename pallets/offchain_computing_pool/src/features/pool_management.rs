@@ -193,4 +193,21 @@ impl<T: Config> Pallet<T> {
 		});
 		Ok(())
 	}
+
+	pub(crate) fn do_set_pool_dispatcher(
+		pool_info: PoolInfo<T::PoolId, T::AccountId, BalanceOf<T>, T::ImplId>,
+		dispatcher: Option<T::AccountId>,
+	) -> DispatchResult {
+		if let Some(dispatcher) = dispatcher.clone() {
+			Dispatchers::<T>::insert(&pool_info.id, dispatcher);
+		} else {
+			Dispatchers::<T>::remove(&pool_info.id);
+		}
+
+		Self::deposit_event(Event::PoolDispatcherSet {
+			pool_id: pool_info.id,
+			dispatcher,
+		});
+		Ok(())
+	}
 }

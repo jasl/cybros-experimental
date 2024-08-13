@@ -316,6 +316,10 @@ pub mod pallet {
 			output: Option<BoundedVec<u8, T::OutputLimit>>,
 			proof: Option<BoundedVec<u8, T::ProofLimit>>,
 		},
+		PoolDispatcherSet {
+			pool_id: T::PoolId,
+			dispatcher: Option<T::AccountId>,
+		}
 	}
 
 	// Errors inform users that something went wrong.
@@ -817,6 +821,28 @@ pub mod pallet {
 		#[transactional]
 		#[pallet::call_index(11)]
 		#[pallet::weight({0})]
+		pub fn set_dispatcher(
+			origin: OriginFor<T>,
+			pool_id: T::PoolId,
+			dispatcher: Option<AccountIdLookupOf<T>>
+		) -> DispatchResult {
+			let who = ensure_signed(origin)?;
+
+			let pool_info = Pools::<T>::get(&pool_id).ok_or(Error::<T>::PoolNotFound)?;
+			Self::ensure_pool_owner(&who, &pool_info)?;
+
+			let dispatcher = if let Some(dispatcher) = dispatcher {
+				T::Lookup::lookup(dispatcher).ok()
+			} else {
+				None
+			};
+
+			Self::do_set_pool_dispatcher(pool_info, dispatcher)
+		}
+
+		#[transactional]
+		#[pallet::call_index(12)]
+		#[pallet::weight({0})]
 		pub fn subscribe_pool(origin: OriginFor<T>, pool_id: T::PoolId) -> DispatchResult {
 			let who = ensure_signed(origin)?;
 
@@ -824,7 +850,7 @@ pub mod pallet {
 		}
 
 		#[transactional]
-		#[pallet::call_index(12)]
+		#[pallet::call_index(13)]
 		#[pallet::weight({0})]
 		pub fn unsubscribe_pool(origin: OriginFor<T>, pool_id: T::PoolId) -> DispatchResult {
 			let who = ensure_signed(origin)?;
@@ -833,7 +859,7 @@ pub mod pallet {
 		}
 
 		#[transactional]
-		#[pallet::call_index(13)]
+		#[pallet::call_index(14)]
 		#[pallet::weight({0})]
 		pub fn create_job(
 			origin: OriginFor<T>,
@@ -917,7 +943,7 @@ pub mod pallet {
 		}
 
 		#[transactional]
-		#[pallet::call_index(14)]
+		#[pallet::call_index(15)]
 		#[pallet::weight({0})]
 		pub fn destroy_job(
 			origin: OriginFor<T>,
@@ -930,7 +956,7 @@ pub mod pallet {
 		}
 
 		#[transactional]
-		#[pallet::call_index(15)]
+		#[pallet::call_index(16)]
 		#[pallet::weight({0})]
 		pub fn destroy_expired_job(
 			origin: OriginFor<T>,
@@ -944,7 +970,7 @@ pub mod pallet {
 		}
 
 		#[transactional]
-		#[pallet::call_index(16)]
+		#[pallet::call_index(17)]
 		#[pallet::weight({0})]
 		pub fn submit_job_result(
 			origin: OriginFor<T>,
@@ -963,7 +989,7 @@ pub mod pallet {
 		}
 
 		#[transactional]
-		#[pallet::call_index(17)]
+		#[pallet::call_index(18)]
 		#[pallet::weight({0})]
 		pub fn assign_job(
 			origin: OriginFor<T>,
@@ -987,7 +1013,7 @@ pub mod pallet {
 		}
 
 		#[transactional]
-		#[pallet::call_index(18)]
+		#[pallet::call_index(19)]
 		#[pallet::weight({0})]
 		pub fn take_job(
 			origin: OriginFor<T>,
@@ -1005,7 +1031,7 @@ pub mod pallet {
 		}
 
 		#[transactional]
-		#[pallet::call_index(19)]
+		#[pallet::call_index(20)]
 		#[pallet::weight({0})]
 		pub fn resign_job(
 			origin: OriginFor<T>,
