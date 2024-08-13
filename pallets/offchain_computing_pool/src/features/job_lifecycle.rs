@@ -21,6 +21,50 @@ use frame_support::pallet_prelude::*;
 use sp_runtime::{traits::Zero, Saturating};
 
 impl<T: Config> Pallet<T> {
+	pub(crate) fn do_assign_job(
+		pool_id: T::PoolId,
+		job_id: T::JobId,
+		worker: T::AccountId,
+		now: u64,
+		expires_in: u64,
+	) -> DispatchResult {
+		Self::ensure_subscribed_worker(&pool_id, &worker)?;
+		let worker_info =
+			PalletInfra::<T>::worker_info(&worker).ok_or(Error::<T>::WorkerNotFound)?;
+		let worker_impl_spec_version =
+			worker_info.impl_spec_version.ok_or(Error::<T>::InternalError)?;
+
+		let current_assigned_jobs_count = CounterForWorkerAssignedJobs::<T>::get(&worker);
+		ensure!(
+			current_assigned_jobs_count < T::MaxAssignedJobsPerWorker::get(),
+			Error::<T>::WorkerAssignedJobsLimitExceeded
+		);
+
+		let mut job = Jobs::<T>::get(&pool_id, &job_id).ok_or(Error::<T>::JobNotFound)?;
+		ensure!(worker_impl_spec_version == job.impl_spec_version, Error::<T>::ImplMismatched);
+		AssignableJobs::<T>::remove((pool_id.clone(), job.impl_spec_version, job.id.clone()));
+
+		ensure!(job.assignee.is_none(), Error::<T>::JobAlreadyAssigned);
+		job.assignee = Some(worker.clone());
+		job.assigned_at = Some(now);
+		job.expires_at = now + expires_in; // Not sure we need to expand expiring time
+
+		let job_id = job.id.clone();
+		CounterForWorkerAssignedJobs::<T>::insert(&worker, current_assigned_jobs_count + 1);
+		Jobs::<T>::insert(&pool_id, &job_id, job);
+
+		let Some(impl_build_version) = worker_info.impl_build_version else {
+			return Err(Error::<T>::InternalError.into())
+		};
+		Self::deposit_event(Event::JobAssigned {
+			pool_id: pool_id.clone(),
+			job_id: job_id.clone(),
+			assignee: worker,
+			impl_build_version,
+		});
+		Ok(())
+	}
+
 	// TODO: Will be replaced by scheduler.
 	pub(crate) fn do_take_job(
 		pool_id: T::PoolId,

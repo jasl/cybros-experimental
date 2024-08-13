@@ -358,6 +358,7 @@ pub mod pallet {
 		JobAlreadyAssigned,
 		UnsupportedImplSpecVersion,
 		InvalidImplSpecVersionRange,
+		DispatcherNotSet,
 		PreemptionNotEnabled,
 	}
 
@@ -945,6 +946,49 @@ pub mod pallet {
 		#[transactional]
 		#[pallet::call_index(16)]
 		#[pallet::weight({0})]
+		pub fn submit_job_result(
+			origin: OriginFor<T>,
+			pool_id: T::PoolId,
+			job_id: T::JobId,
+			result: JobResult,
+			output: Option<BoundedVec<u8, T::OutputLimit>>,
+			proof: Option<BoundedVec<u8, T::ProofLimit>>,
+			soft_expires_in: Option<u64>,
+		) -> DispatchResult {
+			let who = ensure_signed(origin)?;
+
+			let now = T::UnixTime::now().as_secs().saturated_into::<u64>();
+			let expires_in = soft_expires_in.unwrap_or(T::DefaultJobExpiresIn::get());
+			Self::do_submit_job_result(pool_id, job_id, who, result, output, proof, now, expires_in)
+		}
+
+		#[transactional]
+		#[pallet::call_index(17)]
+		#[pallet::weight({0})]
+		pub fn assign_job(
+			origin: OriginFor<T>,
+			pool_id: T::PoolId,
+			job_id: T::JobId,
+			worker: AccountIdLookupOf<T>,
+			soft_expires_in: Option<u64>,
+		) -> DispatchResult {
+			let who = ensure_signed(origin)?;
+			ensure!(
+				Dispatchers::<T>::get(pool_id.clone()).ok_or(Error::<T>::DispatcherNotSet)? == who,
+				Error::<T>::NoPermission
+			);
+
+			let worker = T::Lookup::lookup(worker.clone())?;
+
+			let now = T::UnixTime::now().as_secs().saturated_into::<u64>();
+			let expires_in = soft_expires_in.unwrap_or(T::DefaultJobExpiresIn::get());
+
+			Self::do_assign_job(pool_id, job_id, worker, now, expires_in)
+		}
+
+		#[transactional]
+		#[pallet::call_index(18)]
+		#[pallet::weight({0})]
 		pub fn take_job(
 			origin: OriginFor<T>,
 			pool_id: T::PoolId,
@@ -961,7 +1005,7 @@ pub mod pallet {
 		}
 
 		#[transactional]
-		#[pallet::call_index(17)]
+		#[pallet::call_index(19)]
 		#[pallet::weight({0})]
 		pub fn resign_job(
 			origin: OriginFor<T>,
@@ -971,25 +1015,6 @@ pub mod pallet {
 			let who = ensure_signed(origin)?;
 
 			Self::do_resign_job(pool_id, job_id, who)
-		}
-
-		#[transactional]
-		#[pallet::call_index(18)]
-		#[pallet::weight({0})]
-		pub fn submit_job_result(
-			origin: OriginFor<T>,
-			pool_id: T::PoolId,
-			job_id: T::JobId,
-			result: JobResult,
-			output: Option<BoundedVec<u8, T::OutputLimit>>,
-			proof: Option<BoundedVec<u8, T::ProofLimit>>,
-			soft_expires_in: Option<u64>,
-		) -> DispatchResult {
-			let who = ensure_signed(origin)?;
-
-			let now = T::UnixTime::now().as_secs().saturated_into::<u64>();
-			let expires_in = soft_expires_in.unwrap_or(T::DefaultJobExpiresIn::get());
-			Self::do_submit_job_result(pool_id, job_id, who, result, output, proof, now, expires_in)
 		}
 	}
 
