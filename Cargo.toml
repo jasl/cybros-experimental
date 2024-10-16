@@ -14,8 +14,6 @@ members = [
 	"pallets/*",
 	"solochain/node",
 	"solochain/runtime",
-	"parachain/node",
-	"parachain/runtime",
 ]
 
 [workspace.dependencies]
@@ -24,8 +22,8 @@ color-print = "0.3.6"
 chrono = { version = "0.4.38", default-features = false }
 futures = "0.3.30"
 serde = { version = "1.0.203", default-features = false }
-serde_json = "1.0.120"
-jsonrpsee = "0.23.2"
+serde_json = { version = "1.0.128", default-features = false }
+jsonrpsee = "0.24.7"
 log = { version = "0.4.22", default-features = false }
 hex-literal = "0.4.1"
 smallvec = "1.13.2"
@@ -121,7 +119,7 @@ parachain-info = { package = "staging-parachain-info", git = "https://github.com
 
 # Build related
 substrate-build-script-utils = { git = "https://github.com/paritytech/polkadot-sdk.git", branch = "master" }
-substrate-wasm-builder = { git = "https://github.com/paritytech/polkadot-sdk.git", branch = "master" }
+substrate-wasm-builder = { git = "https://github.com/paritytech/polkadot-sdk.git", branch = "master", default-features = false }
 
 # Frames and pallets
 frame-system = { git = "https://github.com/paritytech/polkadot-sdk.git", branch = "master", default-features = false }

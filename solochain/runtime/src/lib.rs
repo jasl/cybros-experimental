@@ -25,6 +25,8 @@ pub use pallet_timestamp::Call as TimestampCall;
 #[cfg(any(feature = "std", test))]
 pub use sp_runtime::BuildStorage;
 
+pub mod genesis_config_presets;
+
 /// Opaque types. These are used by the CLI to instantiate machinery that don't need to know
 /// the specifics of the runtime. They can then be made to be agnostic over specific formats
 /// of data like extrinsics, allowing for them to continue syncing the network through upgrades
@@ -71,7 +73,7 @@ pub const VERSION: RuntimeVersion = RuntimeVersion {
 	impl_version: 1,
 	apis: apis::RUNTIME_API_VERSIONS,
 	transaction_version: 1,
-	state_version: 1,
+	system_version: 1,
 };
 
 mod block_times {
@@ -216,14 +218,5 @@ mod runtime {
 	pub type TransactionPayment = pallet_transaction_payment;
 
 	#[runtime::pallet_index(6)]
-	pub type Randomness = pallet_insecure_randomness_collective_flip;
-
-	#[runtime::pallet_index(10)]
-	pub type OffchainComputingInfra = pallet_offchain_computing_infra;
-
-	#[runtime::pallet_index(11)]
-	pub type OffchainComputingPool = pallet_offchain_computing_pool;
-
-	#[runtime::pallet_index(255)]
 	pub type Sudo = pallet_sudo;
 }

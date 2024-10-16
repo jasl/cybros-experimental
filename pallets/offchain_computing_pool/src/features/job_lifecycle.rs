@@ -54,7 +54,7 @@ impl<T: Config> Pallet<T> {
 		Jobs::<T>::insert(&pool_id, &job_id, job);
 
 		let Some(impl_build_version) = worker_info.impl_build_version else {
-			return Err(Error::<T>::InternalError.into())
+			return Err(Error::<T>::InternalError.into());
 		};
 		Self::deposit_event(Event::JobAssigned {
 			pool_id: pool_id.clone(),
@@ -95,7 +95,7 @@ impl<T: Config> Pallet<T> {
 		// TODO: the current design has thundering herd problem, but it's OK for now.
 		let mut job = 'block: {
 			if let Some(job_id) = maybe_job_id {
-				break 'block Jobs::<T>::get(&pool_id, &job_id).ok_or(Error::<T>::JobNotFound)
+				break 'block Jobs::<T>::get(&pool_id, &job_id).ok_or(Error::<T>::JobNotFound);
 			}
 
 			let job_id =
@@ -127,7 +127,7 @@ impl<T: Config> Pallet<T> {
 		Jobs::<T>::insert(&pool_id, &job_id, job);
 
 		let Some(impl_build_version) = worker_info.impl_build_version else {
-			return Err(Error::<T>::InternalError.into())
+			return Err(Error::<T>::InternalError.into());
 		};
 		Self::deposit_event(Event::JobAssigned {
 			pool_id: pool_id.clone(),

@@ -204,10 +204,7 @@ impl<T: Config> Pallet<T> {
 			Dispatchers::<T>::remove(&pool_info.id);
 		}
 
-		Self::deposit_event(Event::PoolDispatcherSet {
-			pool_id: pool_info.id,
-			dispatcher,
-		});
+		Self::deposit_event(Event::PoolDispatcherSet { pool_id: pool_info.id, dispatcher });
 		Ok(())
 	}
 }

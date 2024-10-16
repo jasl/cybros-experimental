@@ -161,7 +161,7 @@ mod pallet {
 		#[pallet::constant]
 		type CollectingHeartbeatsDurationInBlocks: Get<u32>;
 
-		/// Allow Opt out attestation
+		/// Allow Opt-out attestation
 		#[pallet::constant]
 		type DisallowOptOutAttestation: Get<bool>;
 
@@ -833,7 +833,7 @@ impl<T: Config> Pallet<T> {
 		let encoded_message = Encode::encode(payload);
 
 		let Ok(signature) = sr25519::Signature::from_slice(attestation_payload) else {
-			return Err(Error::<T>::CanNotVerifyPayload.into())
+			return Err(Error::<T>::CanNotVerifyPayload.into());
 		};
 
 		ensure!(
@@ -874,7 +874,7 @@ impl<T: Config> Pallet<T> {
 		worker_info: &WorkerInfo<T::AccountId, BalanceOf<T>, T::ImplId>,
 	) -> DispatchResult {
 		let Some(worker_attestation_method) = worker_info.attestation_method.clone() else {
-			return Err(Error::<T>::InternalError.into())
+			return Err(Error::<T>::InternalError.into());
 		};
 
 		ensure!(

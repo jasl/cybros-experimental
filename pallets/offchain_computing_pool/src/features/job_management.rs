@@ -221,7 +221,7 @@ impl<T: Config> Pallet<T> {
 			&job.policy_id,
 			|policy_info| -> Result<(), DispatchError> {
 				let Some(policy_info) = policy_info else {
-					return Err(Error::<T>::PoolNotFound.into())
+					return Err(Error::<T>::PoolNotFound.into());
 				};
 
 				policy_info.jobs_count -= 1;

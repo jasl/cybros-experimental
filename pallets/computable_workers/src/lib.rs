@@ -70,8 +70,8 @@ mod benchmarking;
 #[frame_support::pallet]
 pub mod pallet {
 	use frame_support::{
-		pallet_prelude::*,
 		dispatch::DispatchResultWithPostInfo,
+		pallet_prelude::*,
 		traits::nonfungibles_v2::{Inspect, Mutate},
 		DefaultNoBound,
 	};
@@ -88,7 +88,8 @@ pub mod pallet {
 		/// A type representing the weights required by the dispatchables of this pallet.
 		type WeightInfo: crate::WeightInfo;
 
-		type DeviceIdRepository: Inspect<Self::AccountId> + Mutate<Self::AccountId, pallet_device_ids::ItemConfig>;
+		type DeviceIdRepository: Inspect<Self::AccountId>
+			+ Mutate<Self::AccountId, pallet_device_ids::ItemConfig>;
 	}
 
 	#[pallet::pallet]
@@ -195,7 +196,7 @@ pub mod pallet {
 		#[pallet::weight(Weight::from_parts(10_000, 0) + T::DbWeight::get().reads_writes(1,1))]
 		pub fn create_(
 			origin: OriginFor<T>,
-			collection: <T::DeviceIdRepository as Inspect<T::AccountId>>::CollectionId
+			collection: <T::DeviceIdRepository as Inspect<T::AccountId>>::CollectionId,
 		) -> DispatchResultWithPostInfo {
 			let _who = ensure_signed(origin)?;
 

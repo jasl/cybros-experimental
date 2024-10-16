@@ -188,7 +188,7 @@ impl<T: Config> Pallet<T> {
 		if worker_info.status == WorkerStatus::Unresponsive {
 			Self::set_worker_offline(&worker, OfflineReason::Unresponsive);
 
-			return Ok(())
+			return Ok(());
 		}
 
 		ensure!(
@@ -255,7 +255,7 @@ impl<T: Config> Pallet<T> {
 			if now >= attestation_expires_at {
 				Self::set_worker_offline(&worker, OfflineReason::AttestationExpired);
 
-				return Ok(())
+				return Ok(());
 			}
 		}
 
@@ -265,7 +265,7 @@ impl<T: Config> Pallet<T> {
 		{
 			Self::set_worker_offline(&worker, OfflineReason::Graceful);
 
-			return Ok(())
+			return Ok(());
 		}
 
 		// Check the worker's reserved money
@@ -274,11 +274,11 @@ impl<T: Config> Pallet<T> {
 		{
 			Self::set_worker_offline(&worker, OfflineReason::InsufficientDepositFunds);
 
-			return Ok(())
+			return Ok(());
 		}
 
 		let Some(impl_build_version) = worker_info.impl_build_version else {
-			return Err(Error::<T>::InternalError.into())
+			return Err(Error::<T>::InternalError.into());
 		};
 		let impl_build_info = ImplBuilds::<T>::get(&worker_info.impl_id, impl_build_version)
 			.ok_or(Error::<T>::InternalError)?;
@@ -290,7 +290,7 @@ impl<T: Config> Pallet<T> {
 		if !valid_impl_build {
 			Self::set_worker_offline(&worker, OfflineReason::ImplBuildRetired);
 
-			return Ok(())
+			return Ok(());
 		}
 
 		let next_heartbeat = Self::generate_next_heartbeat_block();
@@ -298,7 +298,7 @@ impl<T: Config> Pallet<T> {
 		match stage {
 			FlipFlopStage::Flip => {
 				let Some(flip) = FlipSet::<T>::get(&worker) else {
-					return Err(Error::<T>::HeartbeatAlreadySent.into())
+					return Err(Error::<T>::HeartbeatAlreadySent.into());
 				};
 				ensure!(flip <= current_block, Error::<T>::TooEarly);
 
@@ -307,7 +307,7 @@ impl<T: Config> Pallet<T> {
 			},
 			FlipFlopStage::Flop => {
 				let Some(flop) = FlopSet::<T>::get(&worker) else {
-					return Err(Error::<T>::HeartbeatAlreadySent.into())
+					return Err(Error::<T>::HeartbeatAlreadySent.into());
 				};
 				ensure!(flop <= current_block, Error::<T>::TooEarly);
 
@@ -318,10 +318,10 @@ impl<T: Config> Pallet<T> {
 		}
 
 		let Some(last_sent_heartbeat_at) = worker_info.last_sent_heartbeat_at else {
-			return Err(Error::<T>::InternalError.into())
+			return Err(Error::<T>::InternalError.into());
 		};
 		let Some(mut uptime) = worker_info.uptime else {
-			return Err(Error::<T>::InternalError.into())
+			return Err(Error::<T>::InternalError.into());
 		};
 		uptime += now - last_sent_heartbeat_at;
 		worker_info.uptime = Some(uptime);

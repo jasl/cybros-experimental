@@ -1,7 +1,7 @@
 [package]
 name = "solochain-template-node"
 description = "A solochain node template built with Substrate, part of Polkadot Sdk."
-version = "0.0.0"
+version = "0.0.1"
 license = "Unlicense"
 authors.workspace = true
 homepage.workspace = true
@@ -14,33 +14,32 @@ build = "build.rs"
 [package.metadata.docs.rs]
 targets = ["x86_64-unknown-linux-gnu"]
 
-[build-dependencies]
-substrate-build-script-utils = { workspace = true }
-
 [dependencies]
-clap = { features = ["derive"], workspace = true }
-futures = { features = ["thread-pool"], workspace = true }
+clap = { workspace = true, features = ["derive"] }
+futures = { workspace = true, features = ["thread-pool"] }
 serde_json = { workspace = true, default-features = true }
-jsonrpsee = { features = ["server"], workspace = true }
+jsonrpsee = { workspace = true, features = ["server"] }
 
 # Substrate client
-sc-cli = { workspace = true }
-sc-executor = { workspace = true }
-sc-network = { workspace = true }
-sc-service = { workspace = true }
-sc-telemetry = { workspace = true }
-sc-transaction-pool = { workspace = true }
-sc-transaction-pool-api = { workspace = true }
-sc-offchain = { workspace = true }
-sc-consensus-aura = { workspace = true }
-sc-consensus = { workspace = true }
-sc-consensus-grandpa = { workspace = true }
-sc-client-api = { workspace = true }
-sc-rpc-api = { workspace = true }
-sc-basic-authorship = { workspace = true }
+sc-cli = { workspace = true, default-features = true }
+sp-core = { workspace = true, default-features = true }
+sc-executor = { workspace = true, default-features = true }
+sc-network = { workspace = true, default-features = true }
+sc-service = { workspace = true, default-features = true }
+sc-telemetry = { workspace = true, default-features = true }
+sc-transaction-pool = { workspace = true, default-features = true }
+sc-transaction-pool-api = { workspace = true, default-features = true }
+sc-offchain = { workspace = true, default-features = true }
+sc-consensus-aura = { workspace = true, default-features = true }
+sp-consensus-aura = { workspace = true, default-features = true }
+sc-consensus = { workspace = true, default-features = true }
+sc-consensus-grandpa = { workspace = true, default-features = true }
+sp-consensus-grandpa = { workspace = true, default-features = true }
+sp-genesis-builder = { workspace = true, default-features = true }
+sc-client-api = { workspace = true, default-features = true }
+sc-basic-authorship = { workspace = true, default-features = true }
 
 # Substrate primitives
-sp-core = { workspace = true, default-features = true }
 sp-runtime = { workspace = true, default-features = true }
 sp-io = { workspace = true, default-features = true }
 sp-timestamp = { workspace = true, default-features = true }
@@ -49,15 +48,13 @@ sp-keyring = { workspace = true, default-features = true }
 sp-api = { workspace = true, default-features = true }
 sp-blockchain = { workspace = true, default-features = true }
 sp-block-builder = { workspace = true, default-features = true }
-sp-consensus-aura = { workspace = true, default-features = true }
-sp-consensus-grandpa = { workspace = true, default-features = true }
 
 # Frame and pallets
 frame-system = { workspace = true, default-features = true }
 frame-metadata-hash-extension = { workspace = true, default-features = true }
-substrate-frame-rpc-system = { workspace = true, default-features = true }
 pallet-transaction-payment = { workspace = true, default-features = true }
 pallet-transaction-payment-rpc = { workspace = true, default-features = true }
+substrate-frame-rpc-system = { workspace = true, default-features = true }
 
 # These dependencies are used for runtime benchmarking
 frame-benchmarking-cli = { workspace = true, default-features = true }
@@ -65,24 +62,25 @@ frame-benchmarking-cli = { workspace = true, default-features = true }
 # Local Dependencies
 solochain-template-runtime = { workspace = true }
 
+[build-dependencies]
+substrate-build-script-utils = { workspace = true, default-features = true }
+
 [features]
 default = ["std"]
-std = [
-	"solochain-template-runtime/std",
-]
+std = ["solochain-template-runtime/std"]
 # Dependencies that are only required if runtime benchmarking should be build.
 runtime-benchmarks = [
 	"frame-benchmarking-cli/runtime-benchmarks",
 	"frame-system/runtime-benchmarks",
 	"sc-service/runtime-benchmarks",
-	"sp-runtime/runtime-benchmarks",
 	"solochain-template-runtime/runtime-benchmarks",
+	"sp-runtime/runtime-benchmarks",
 ]
 # Enable features that allow the runtime to be tried and debugged. Name might be subject to change
 # in the near future.
 try-runtime = [
 	"frame-system/try-runtime",
 	"pallet-transaction-payment/try-runtime",
-	"sp-runtime/try-runtime",
 	"solochain-template-runtime/try-runtime",
+	"sp-runtime/try-runtime",
 ]

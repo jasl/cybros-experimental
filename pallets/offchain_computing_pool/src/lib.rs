@@ -319,7 +319,7 @@ pub mod pallet {
 		PoolDispatcherSet {
 			pool_id: T::PoolId,
 			dispatcher: Option<T::AccountId>,
-		}
+		},
 	}
 
 	// Errors inform users that something went wrong.
@@ -566,13 +566,8 @@ pub mod pallet {
 	>;
 
 	#[pallet::storage]
-	pub type Dispatchers<T: Config> = StorageMap<
-		_,
-		Blake2_128Concat,
-		T::PoolId,
-		T::AccountId,
-		OptionQuery
-	>;
+	pub type Dispatchers<T: Config> =
+		StorageMap<_, Blake2_128Concat, T::PoolId, T::AccountId, OptionQuery>;
 
 	#[pallet::storage]
 	pub type CounterForWorkerAddedPools<T: Config> =
@@ -824,7 +819,7 @@ pub mod pallet {
 		pub fn set_dispatcher(
 			origin: OriginFor<T>,
 			pool_id: T::PoolId,
-			dispatcher: Option<AccountIdLookupOf<T>>
+			dispatcher: Option<AccountIdLookupOf<T>>,
 		) -> DispatchResult {
 			let who = ensure_signed(origin)?;
 
@@ -1146,7 +1141,7 @@ pub mod pallet {
 
 		fn before_offline(worker: &T::AccountId, _reason: OfflineReason) {
 			if CounterForWorkerAssignedJobs::<T>::get(worker) == 0 {
-				return
+				return;
 			}
 
 			for pool_id in WorkerSubscribedPools::<T>::iter_key_prefix(worker) {
@@ -1197,7 +1192,7 @@ pub mod pallet {
 		fn before_deregister(worker: &T::AccountId) {
 			let worker_added_pools_count = CounterForWorkerAddedPools::<T>::get(worker);
 			if worker_added_pools_count == 0 {
-				return
+				return;
 			}
 
 			let _ = WorkerSubscribedPools::<T>::clear_prefix(

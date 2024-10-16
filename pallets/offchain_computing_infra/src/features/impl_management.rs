@@ -206,7 +206,7 @@ impl<T: Config> Pallet<T> {
 			impl_build_version,
 			|impl_build_info| -> Result<(), DispatchError> {
 				let Some(info) = impl_build_info.as_mut() else {
-					return Err(Error::<T>::ImplBuildNotFound.into())
+					return Err(Error::<T>::ImplBuildNotFound.into());
 				};
 
 				info.status = status;
