@@ -219,4 +219,13 @@ mod runtime {
 
 	#[runtime::pallet_index(6)]
 	pub type Sudo = pallet_sudo;
+
+	#[runtime::pallet_index(7)]
+	pub type Randomness = pallet_insecure_randomness_collective_flip;
+
+	#[runtime::pallet_index(8)]
+	pub type OffchainComputingInfra = pallet_offchain_computing_infra;
+
+	#[runtime::pallet_index(9)]
+	pub type OffchainComputingPool = pallet_offchain_computing_pool;
 }

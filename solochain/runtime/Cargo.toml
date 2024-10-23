@@ -56,7 +56,10 @@ pallet-transaction-payment-rpc-runtime-api = { workspace = true, default-feature
 frame-benchmarking = { workspace = true, default-features = false, optional = true }
 frame-system-benchmarking = { workspace = true, default-features = false, optional = true }
 
-# The pallet in this template.
+# The pallet in this runtime.
+pallet-insecure-randomness-collective-flip = { workspace = true, default-features = false }
+pallet-offchain_computing-infra = { workspace = true, default-features = false }
+pallet-offchain_computing-pool = { workspace = true, default-features = false }
 
 [build-dependencies]
 substrate-wasm-builder = { workspace = true, default-features = false, optional = true }
@@ -97,6 +100,9 @@ std = [
 	"pallet-timestamp/std",
 	"pallet-transaction-payment-rpc-runtime-api/std",
 	"pallet-transaction-payment/std",
+	"pallet-insecure-randomness-collective-flip/std",
+	"pallet-offchain_computing-infra/std",
+	"pallet-offchain_computing-pool/std",
 ]
 
 runtime-benchmarks = [
@@ -109,6 +115,8 @@ runtime-benchmarks = [
 	"pallet-grandpa/runtime-benchmarks",
 	"pallet-sudo/runtime-benchmarks",
 	"pallet-timestamp/runtime-benchmarks",
+	"pallet-offchain_computing-infra/runtime-benchmarks",
+	"pallet-offchain_computing-pool/runtime-benchmarks",
 ]
 
 try-runtime = [
@@ -123,6 +131,9 @@ try-runtime = [
 	"pallet-sudo/try-runtime",
 	"pallet-timestamp/try-runtime",
 	"pallet-transaction-payment/try-runtime",
+	"pallet-insecure-randomness-collective-flip/try-runtime",
+	"pallet-offchain_computing-infra/try-runtime",
+	"pallet-offchain_computing-pool/try-runtime",
 ]
 
 # Enable the metadata hash generation.

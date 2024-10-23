@@ -1,0 +1,55 @@
+{
+  "outDir": "src/types",
+  "specVersions": "./tmp/metadata.json",
+  "pallets": {
+    "OffchainComputingInfra": {
+      "events": [
+        "WorkerRegistered",
+        "WorkerDeregistered",
+        "WorkerOnline",
+        "WorkerUnresponsive",
+        "WorkerRequestingOffline",
+        "WorkerOffline",
+        "WorkerHeartbeatReceived",
+        "WorkerAttestationRefreshed",
+        "ImplRegistered",
+        "ImplDeregistered",
+        "ImplMetadataUpdated",
+        "ImplMetadataRemoved",
+        "ImplBuildRegistered",
+        "ImplBuildDeregistered",
+        "ImplBuildStatusUpdated"
+      ],
+      "calls": [],
+      "storage": [],
+      "constants": []
+    },
+    "OffchainComputingPool": {
+      "events": [
+        "PoolCreated",
+        "PoolDestroyed",
+        "PoolMetadataUpdated",
+        "PoolMetadataRemoved",
+        "PoolSettingsUpdated",
+        "JobPolicyCreated",
+        "JobPolicyDestroyed",
+        "JobPolicyEnablementUpdated",
+        "AccountAuthorized",
+        "AccountRevoked",
+        "WorkerAuthorized",
+        "WorkerRevoked",
+        "WorkerSubscribed",
+        "WorkerUnsubscribed",
+        "JobCreated",
+        "JobDestroyed",
+        "JobAssigned",
+        "JobResigned",
+        "JobStatusUpdated",
+        "JobResultUpdated"
+      ],
+      "calls": [],
+      "storage": [],
+      "constants": []
+    }
+  }
+}

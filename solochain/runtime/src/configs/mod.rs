@@ -32,6 +32,7 @@ use frame_support::{
 		IdentityFee, Weight,
 	},
 };
+use frame_system::EnsureSigned;
 use frame_system::limits::{BlockLength, BlockWeights};
 use pallet_transaction_payment::{ConstFeeMultiplier, FungibleAdapter, Multiplier};
 use sp_consensus_aura::sr25519::AuthorityId as AuraId;
@@ -39,11 +40,7 @@ use sp_runtime::{traits::One, Perbill};
 use sp_version::RuntimeVersion;
 
 // Local module imports
-use super::{
-	AccountId, Aura, Balance, Balances, Block, BlockNumber, Hash, Nonce, PalletInfo, Runtime,
-	RuntimeCall, RuntimeEvent, RuntimeFreezeReason, RuntimeHoldReason, RuntimeOrigin, RuntimeTask,
-	System, EXISTENTIAL_DEPOSIT, SLOT_DURATION, VERSION,
-};
+use super::{AccountId, Aura, Balance, Balances, Block, BlockNumber, Hash, Nonce, PalletInfo, Runtime, RuntimeCall, RuntimeEvent, RuntimeFreezeReason, RuntimeHoldReason, RuntimeOrigin, RuntimeTask, System, EXISTENTIAL_DEPOSIT, MILLI_UNIT, SLOT_DURATION, UNIT, VERSION};
 
 const NORMAL_DISPATCH_RATIO: Perbill = Perbill::from_percent(75);
 
@@ -148,6 +145,7 @@ impl pallet_transaction_payment::Config for Runtime {
 	type WeightToFee = IdentityFee<Balance>;
 	type LengthToFee = IdentityFee<Balance>;
 	type FeeMultiplierUpdate = ConstFeeMultiplier<FeeMultiplier>;
+	type WeightInfo = pallet_transaction_payment::weights::SubstrateWeight<Runtime>;
 }
 
 impl pallet_sudo::Config for Runtime {
@@ -155,3 +153,54 @@ impl pallet_sudo::Config for Runtime {
 	type RuntimeCall = RuntimeCall;
 	type WeightInfo = pallet_sudo::weights::SubstrateWeight<Runtime>;
 }
+
+impl pallet_insecure_randomness_collective_flip::Config for Runtime {}
+
+impl pallet_offchain_computing_infra::Config for Runtime {
+	type RuntimeEvent = RuntimeEvent;
+	type RuntimeHoldReason = RuntimeHoldReason;
+	type Currency = pallet_balances::Pallet<Runtime>;
+	type UnixTime = pallet_timestamp::Pallet<Runtime>;
+	type Randomness = pallet_insecure_randomness_collective_flip::Pallet<Runtime>;
+	type ImplId = u32;
+	type RegisterImplOrigin = EnsureSigned<Self::AccountId>;
+	type RegisterWorkerDeposit = ConstU128<{ 100 * UNIT }>;
+	type RegisterImplDeposit = ConstU128<{ 100 * UNIT }>;
+	type ImplMetadataDepositBase = ConstU128<{ UNIT }>;
+	type ImplMetadataDepositPerByte = ConstU128<{ MILLI_UNIT }>;
+	type ImplMetadataLimit = ConstU32<2048>; // 2KiB
+	type MaxImplBuilds = ConstU32<8>;
+	type HandleUnresponsivePerBlockLimit = ConstU32<100>;
+	type CollectingHeartbeatsDurationInBlocks = ConstU32<300>; // 30min * 60 / 6
+	type DisallowOptOutAttestation = ConstBool<false>;
+	type WeightInfo = pallet_offchain_computing_infra::weights::SubstrateWeight<Runtime>;
+	type OffchainWorkerLifecycleHooks = pallet_offchain_computing_pool::Pallet<Runtime>;
+}
+
+impl pallet_offchain_computing_pool::Config for Runtime {
+	type RuntimeEvent = RuntimeEvent;
+	type RuntimeHoldReason = RuntimeHoldReason;
+	type Currency = pallet_balances::Pallet<Runtime>;
+	type PoolId = u32;
+	type JobId = u32;
+	type PolicyId = u32;
+	type CreatePoolOrigin = EnsureSigned<Self::AccountId>;
+	type PoolCreationDeposit = ConstU128<{ UNIT }>;
+	type JobCreationDeposit = ConstU128<{ UNIT }>;
+	type JobStorageDepositPerByte = ConstU128<{ MILLI_UNIT }>;
+	type PoolMetadataDepositBase = ConstU128<{ MILLI_UNIT }>;
+	type PoolMetadataDepositPerByte = ConstU128<{ MILLI_UNIT }>;
+	type MaxAssignedJobsPerWorker = ConstU32<8>;
+	type MaxSubscribedPoolsPerWorker = ConstU32<8>;
+	type MaxPoliciesPerPool = ConstU32<8>;
+	type MaxJobsPerPool = ConstU32<1000>;
+	type MaxWorkersPerPool = ConstU32<100>;
+	type MinJobExpiresIn = ConstU64<600>; // ~ 10 min
+	type MaxJobExpiresIn = ConstU64<86400>; // ~ 1 day
+	type DefaultJobExpiresIn = ConstU64<3600>; // ~ 1 hour
+	type PoolMetadataLimit = ConstU32<2048>; // 2KiB
+	type InputLimit = ConstU32<2048>; // 2KiB
+	type OutputLimit = ConstU32<2048>; // 2KiB
+	type ProofLimit = ConstU32<2048>; // 2KiB
+}
+
