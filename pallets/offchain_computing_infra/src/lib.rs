@@ -60,7 +60,7 @@ use scale_codec::{Decode, Encode};
 use sp_core::{sr25519, ByteArray, H256};
 use sp_io::crypto::sr25519_verify;
 use sp_runtime::{
-	traits::StaticLookup,
+	traits::{StaticLookup, Zero},
 	DispatchError, SaturatedConversion, Saturating,
 };
 

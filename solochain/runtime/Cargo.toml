@@ -115,7 +115,7 @@ runtime-benchmarks = [
 	"pallet-grandpa/runtime-benchmarks",
 	"pallet-sudo/runtime-benchmarks",
 	"pallet-timestamp/runtime-benchmarks",
-	"pallet-transaction-payment/runtime-benchmarks",
+	# "pallet-transaction-payment/runtime-benchmarks",
 	"pallet-offchain_computing-infra/runtime-benchmarks",
 	"pallet-offchain_computing-pool/runtime-benchmarks",
 ]

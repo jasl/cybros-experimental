@@ -7,7 +7,7 @@ deploy:
   addons:
     postgres: 
     rpc:
-      - kusama.http
+      - substrate.http
   processor:
     cmd:
       - sqd
