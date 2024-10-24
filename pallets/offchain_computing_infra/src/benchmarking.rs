@@ -21,7 +21,7 @@
 // Only enable this module for benchmarking.
 #![cfg(feature = "runtime-benchmarks")]
 
-use frame_benchmarking::{account, impl_benchmark_test_suite, v2::*, whitelisted_caller};
+use frame_benchmarking::{account, v2::*, whitelisted_caller};
 use frame_support::{
 	assert_ok, fail,
 	traits::{fungible::Mutate, tokens::Fortitude},
@@ -29,6 +29,7 @@ use frame_support::{
 use frame_system::{pallet_prelude::BlockNumberFor, Account, RawOrigin};
 use sp_runtime::{
 	app_crypto::{sr25519, KeyTypeId, RuntimePublic},
+	traits::Zero,
 	SaturatedConversion, Saturating,
 };
 
