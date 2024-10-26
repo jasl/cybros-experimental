@@ -28,14 +28,6 @@ pub fn local_chain_spec() -> Result<ChainSpec, String> {
 	.build())
 }
 
-pub fn test_chain_spec() -> Result<ChainSpec, String> {
-	Ok(ChainSpec::builder(
-		WASM_BINARY.ok_or_else(|| "Development wasm not available".to_string())?,
-		None,
-	)
-	.with_name("Testnet")
-	.with_id("Testnet")
-	.with_chain_type(ChainType::Live)
-	.with_genesis_config_preset_name("testnet")
-	.build())
+pub fn test_chain_spec() -> Result<Box<ChainSpec>, String> {
+	Ok(Box::new(ChainSpec::from_json_bytes(include_bytes!("../res/testnet.json"))?))
 }
