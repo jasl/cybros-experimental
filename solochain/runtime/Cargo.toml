@@ -1,6 +1,6 @@
 [package]
-name = "solochain-template-runtime"
-description = "A solochain runtime template built with Substrate, part of Polkadot Sdk."
+name = "cybros-solochain-runtime"
+description = "Cybros solo-chain runtime"
 version = "0.0.1"
 license = "Unlicense"
 authors.workspace = true

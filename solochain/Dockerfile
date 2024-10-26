@@ -1,28 +1,28 @@
 FROM docker.io/paritytech/ci-unified:latest as builder
 
-WORKDIR /polkadot
-COPY . /polkadot
+WORKDIR /runner
+COPY . /runner
 
 RUN cargo fetch
 RUN cargo build --locked --release
 
 FROM docker.io/parity/base-bin:latest
 
-COPY --from=builder /polkadot/target/release/solochain-template-node /usr/local/bin
+COPY --from=builder /runner/target/release/cybros-solochain-node /usr/local/bin
 
 USER root
 RUN useradd -m -u 1001 -U -s /bin/sh -d /polkadot polkadot && \
-	mkdir -p /data /polkadot/.local/share && \
-	chown -R polkadot:polkadot /data && \
-	ln -s /data /polkadot/.local/share/polkadot && \
+	mkdir -p /data /runner/.local/share && \
+	chown -R runner:runner /data && \
+	ln -s /data /runner/.local/share/runner && \
 # unclutter and minimize the attack surface
 	rm -rf /usr/bin /usr/sbin && \
 # check if executable works in this container
-	/usr/local/bin/solochain-template-node --version
+	/usr/local/bin/cybros-solochain-node --version
 
-USER polkadot
+USER runner
 
-EXPOSE 30333 9933 9944 9615
+EXPOSE 30333 9944 9615
 VOLUME ["/data"]
 
-ENTRYPOINT ["/usr/local/bin/solochain-template-node"]
+ENTRYPOINT ["/usr/local/bin/cybros-solochain-node"]

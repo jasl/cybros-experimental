@@ -12,8 +12,7 @@ members = [
 	"pallets/device_ids",
 	"pallets/device_ids/runtime-api",
 	"pallets/*",
-	"solochain/node",
-	"solochain/runtime",
+	"solochain/*",
 ]
 
 [workspace.dependencies]
@@ -145,9 +144,6 @@ pallet-offchain_computing-infra-primitives = { path = "pallets/offchain_computin
 pallet-offchain_computing-infra = { path = "pallets/offchain_computing_infra", default-features = false }
 pallet-offchain_computing-pool-primitives = { path = "pallets/offchain_computing_pool/primitives", default-features = false }
 pallet-offchain_computing-pool = { path = "pallets/offchain_computing_pool", default-features = false }
-
-solochain-template-runtime = { path = "solochain/runtime", default-features = false }
-parachain-template-runtime = { path = "parachain/runtime", default-features = false }
 
 [workspace.lints.rust]
 suspicious_double_ref_op = { level = "allow", priority = 2 }

@@ -32,15 +32,21 @@ use frame_support::{
 		IdentityFee, Weight,
 	},
 };
-use frame_system::EnsureSigned;
-use frame_system::limits::{BlockLength, BlockWeights};
+use frame_system::{
+	limits::{BlockLength, BlockWeights},
+	EnsureSigned,
+};
 use pallet_transaction_payment::{ConstFeeMultiplier, FungibleAdapter, Multiplier};
 use sp_consensus_aura::sr25519::AuthorityId as AuraId;
 use sp_runtime::{traits::One, Perbill};
 use sp_version::RuntimeVersion;
 
 // Local module imports
-use super::{AccountId, Aura, Balance, Balances, Block, BlockNumber, Hash, Nonce, PalletInfo, Runtime, RuntimeCall, RuntimeEvent, RuntimeFreezeReason, RuntimeHoldReason, RuntimeOrigin, RuntimeTask, System, EXISTENTIAL_DEPOSIT, MILLI_UNIT, SLOT_DURATION, UNIT, VERSION};
+use super::{
+	AccountId, Aura, Balance, Balances, Block, BlockNumber, Hash, Nonce, PalletInfo, Runtime,
+	RuntimeCall, RuntimeEvent, RuntimeFreezeReason, RuntimeHoldReason, RuntimeOrigin, RuntimeTask,
+	System, EXISTENTIAL_DEPOSIT, MILLI_UNIT, SLOT_DURATION, UNIT, VERSION,
+};
 
 const NORMAL_DISPATCH_RATIO: Perbill = Perbill::from_percent(75);
 
@@ -201,4 +207,3 @@ impl pallet_offchain_computing_pool::Config for Runtime {
 	type OutputLimit = ConstU32<2048>; // 2KiB
 	type ProofLimit = ConstU32<2048>; // 2KiB
 }
-

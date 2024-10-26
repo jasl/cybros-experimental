@@ -1,12 +1,12 @@
 [package]
-name = "solochain-template-node"
-description = "A solochain node template built with Substrate, part of Polkadot Sdk."
-version = "0.0.1"
-license = "Unlicense"
+name = "cybros-solochain-node"
+version = "0.0.1-dev"
+description = "Cybros solochain node"
 authors.workspace = true
 homepage.workspace = true
 repository.workspace = true
-edition.workspace = true
+license.workspace = true
+edition = "2021"
 publish = false
 
 build = "build.rs"
@@ -60,14 +60,14 @@ substrate-frame-rpc-system = { workspace = true, default-features = true }
 frame-benchmarking-cli = { workspace = true, default-features = true }
 
 # Local Dependencies
-solochain-template-runtime = { workspace = true }
+runtime = { package = "cybros-solochain-runtime", path = "../runtime", default-features = false }
 
 [build-dependencies]
 substrate-build-script-utils = { workspace = true, default-features = true }
 
 [features]
 default = ["std"]
-std = ["solochain-template-runtime/std"]
+std = ["runtime/std"]
 # Dependencies that are only required if runtime benchmarking should be build.
 runtime-benchmarks = [
 	"sc-service/runtime-benchmarks",
@@ -75,13 +75,13 @@ runtime-benchmarks = [
 	"frame-benchmarking-cli/runtime-benchmarks",
 	"frame-system/runtime-benchmarks",
 	# "pallet-transaction-payment/runtime-benchmarks",
-	"solochain-template-runtime/runtime-benchmarks",
+	"runtime/runtime-benchmarks",
 ]
 # Enable features that allow the runtime to be tried and debugged. Name might be subject to change
 # in the near future.
 try-runtime = [
+	"sp-runtime/try-runtime",
 	"frame-system/try-runtime",
 	"pallet-transaction-payment/try-runtime",
-	"solochain-template-runtime/try-runtime",
-	"sp-runtime/try-runtime",
+	"runtime/try-runtime",
 ]

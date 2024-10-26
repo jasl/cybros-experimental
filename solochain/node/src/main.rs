@@ -1,4 +1,4 @@
-//! Substrate Node Template CLI library.
+//! Cybros node CLI library.
 #![warn(missing_docs)]
 
 mod benchmarking;
