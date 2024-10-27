@@ -1,17 +1,21 @@
-FROM docker.io/paritytech/ci-unified:latest as builder
+# syntax=docker/dockerfile:1
+# check=skip=FromPlatformFlagConstDisallowed
+
+FROM --platform=linux/amd64 docker.io/paritytech/ci-unified:latest AS builder
+
+COPY . /runner
 
 WORKDIR /runner
-COPY . /runner
 
 RUN cargo fetch
 RUN cargo build --locked --release
 
-FROM docker.io/parity/base-bin:latest
+FROM --platform=linux/amd64 docker.io/parity/base-bin:latest
 
 COPY --from=builder /runner/target/release/cybros-solochain-node /usr/local/bin
 
 USER root
-RUN useradd -m -u 1001 -U -s /bin/sh -d /polkadot polkadot && \
+RUN useradd -m -u 1001 -U -s /bin/sh -d /runner runner && \
 	mkdir -p /data /runner/.local/share && \
 	chown -R runner:runner /data && \
 	ln -s /data /runner/.local/share/runner && \
