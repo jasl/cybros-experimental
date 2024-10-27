@@ -2,6 +2,8 @@
   "version": "4",
   "specifiers": {
     "jsr:@std/cli@*": "1.0.6",
+    "npm:@polkadot-labs/hdkd-helpers@*": "0.0.8",
+    "npm:@polkadot-labs/hdkd@*": "0.0.8",
     "npm:@polkadot/keyring@*": "13.2.1_@polkadot+util@13.2.1_@polkadot+util-crypto@13.2.1__@polkadot+util@13.2.1__@polkadot+x-randomvalues@13.2.1___@polkadot+util@13.2.1___@polkadot+wasm-util@7.4.1____@polkadot+util@13.2.1__@polkadot+wasm-util@7.4.1___@polkadot+util@13.2.1",
     "npm:@polkadot/util-crypto@*": "13.2.1_@polkadot+util@13.2.1_@polkadot+x-randomvalues@13.2.1__@polkadot+util@13.2.1__@polkadot+wasm-util@7.4.1___@polkadot+util@13.2.1_@polkadot+wasm-util@7.4.1__@polkadot+util@13.2.1"
   },
@@ -19,6 +21,26 @@
     },
     "@noble/hashes@1.5.0": {
       "integrity": "sha512-1j6kQFb7QRru7eKN3ZDvRcP13rugwdxZqCjbiAVZfIJwgj2A65UmT4TgARXGlXgnRkORLTDTrO19ZErt7+QXgA=="
+    },
+    "@polkadot-labs/hdkd-helpers@0.0.8": {
+      "integrity": "sha512-nTJOinTKuINHwKsUXR+Q1Hld0DU+EYVxcfQqiJz9PH8L+48K3gPfpAHDApIuOW6Uq6yVb5/pgcDPNCaJS5nYsg==",
+      "dependencies": [
+        "@noble/curves",
+        "@noble/hashes",
+        "@polkadot-labs/schnorrkel-wasm",
+        "@scure/base",
+        "scale-ts"
+      ]
+    },
+    "@polkadot-labs/hdkd@0.0.8": {
+      "integrity": "sha512-gpcHtJ28FfugQ7uRj+EQzdhbtm1qchcW9hC1Gsf+IvMiB//Dx/K3tPS9uKtPDu7OoX4p/McpPcLm7IomdlYJbg==",
+      "dependencies": [
+        "@polkadot-labs/hdkd-helpers",
+        "@polkadot-labs/schnorrkel-wasm"
+      ]
+    },
+    "@polkadot-labs/schnorrkel-wasm@0.0.5": {
+      "integrity": "sha512-oUKF4Qu+V1bPxEjq3kmzI3FZrMIr1kK/4cxntoHSBDTZn/Ymab9LXVhRNrbVend5JrwDANePcYqbK5Fdn9NGhQ=="
     },
     "@polkadot/keyring@13.2.1_@polkadot+util@13.2.1_@polkadot+util-crypto@13.2.1__@polkadot+util@13.2.1__@polkadot+x-randomvalues@13.2.1___@polkadot+util@13.2.1___@polkadot+wasm-util@7.4.1____@polkadot+util@13.2.1__@polkadot+wasm-util@7.4.1___@polkadot+util@13.2.1": {
       "integrity": "sha512-tnNLHaOuwoVC3n2tUQe0iSI4Jyxzqm7CPnf/sWMAAFImaVnC7PhiZFvqs2QGpha4ks9Lv722Vkjh7iIKUpEsUA==",
@@ -175,6 +197,9 @@
     },
     "bn.js@5.2.1": {
       "integrity": "sha512-eXRvHzWyYPBuB4NBy0cmYQjGitUrtqwbvlzP3G6VFnNRbsZQIxQ10PbKKHt8gZ/HW/D/747aDl+QkDqg3KQLMQ=="
+    },
+    "scale-ts@1.6.0": {
+      "integrity": "sha512-Ja5VCjNZR8TGKhUumy9clVVxcDpM+YFjAnkMuwQy68Hixio3VRRvWdE3g8T/yC+HXA0ZDQl2TGyUmtmbcVl40Q=="
     },
     "tslib@2.8.0": {
       "integrity": "sha512-jWVzBLplnCmoaTr13V9dYbiQ99wvZRd0vNWaDRg+aVYRcjDF3nDksxFDE/+fkXnKhpnUUkmx5pK/v8mCtLVqZA=="

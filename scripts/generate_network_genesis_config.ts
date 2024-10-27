@@ -1,8 +1,9 @@
 import { parseArgs } from "jsr:@std/cli/parse-args";
-import { Keyring } from "npm:@polkadot/keyring";
-import { cryptoWaitReady, mnemonicGenerate } from "npm:@polkadot/util-crypto";
+import { entropyToMiniSecret, generateMnemonic, mnemonicToEntropy, ss58Address } from "npm:@polkadot-labs/hdkd-helpers";
+import { sr25519CreateDerive, ed25519CreateDerive } from "npm:@polkadot-labs/hdkd";
 import { stringToInteger } from "./deno_lib/utils.ts"
 
+const ss58Prefix = 42;
 const parsedArgs = parseArgs(Deno.args, {
     alias: {
         "mnemonic": "m",
@@ -20,43 +21,43 @@ const parsedArgs = parseArgs(Deno.args, {
     },
 });
 
-await cryptoWaitReady().catch((e) => {
-    console.error("Crypto module initialize failed.");
-    console.error(e.message);
-    Deno.exit(1);
-});
-
 const validatorsCount = stringToInteger(parsedArgs.validatorsCount) ?? 3;
 const endowment = parseInt(parsedArgs.endowment);
-const mnemonic = parsedArgs.mnemonic ?? mnemonicGenerate();
+const mnemonic = parsedArgs.mnemonic ?? generateMnemonic();
 
-const sr25519keyring = new Keyring({ type: 'sr25519' });
-const ed25519keyring = new Keyring({ type: 'ed25519' });
+const sr25519derive = sr25519CreateDerive(entropyToMiniSecret(mnemonicToEntropy(mnemonic)));
+const ed25519derive = ed25519CreateDerive(entropyToMiniSecret(mnemonicToEntropy(mnemonic)));
 
-const rootKey = sr25519keyring.addFromUri(`${mnemonic}//root`).address;
+const rootMnemonic = `//root`;
+const rootKeyPair = sr25519derive(rootMnemonic);
+const rootAddress = ss58Address(rootKeyPair.publicKey, ss58Prefix);
 
 const initialAuthorities = [];
 const nodesKeys = [];
 for (let i = 1; i <= validatorsCount; i++) {
-    const accountMnemonic = `${mnemonic}//validator//${i}`;
-    const auraKeyMnemonic = `${mnemonic}//validator//${i}//aura`;
-    const grandpaKeyMnemonic = `${mnemonic}//validator//${i}//grandpa`;
+    const accountMnemonic = `//validator//${i}`;
+    const auraKeyMnemonic = `//validator//${i}//aura`;
+    const grandpaKeyMnemonic = `//validator//${i}//grandpa`;
 
-    const account = sr25519keyring.addFromUri(accountMnemonic).address;
-    const auraKey = sr25519keyring.addFromUri(auraKeyMnemonic).address;
-    const grandpaKey = ed25519keyring.addFromUri(grandpaKeyMnemonic).address;
+    const accountKeyPair = sr25519derive(accountMnemonic);
+    const auraKeyPair = sr25519derive(auraKeyMnemonic);
+    const grandpaKeyPair = ed25519derive(grandpaKeyMnemonic);
 
-    initialAuthorities.push([account, auraKey, grandpaKey]);
+    const accountAddress = ss58Address(accountKeyPair.publicKey, ss58Prefix);
+    const auraKeyAddress = ss58Address(auraKeyPair.publicKey, ss58Prefix);
+    const grandpaKeyAddress = ss58Address(grandpaKeyPair.publicKey, ss58Prefix);
+
+    initialAuthorities.push([accountAddress, auraKeyAddress, grandpaKeyAddress]);
     nodesKeys.push({
         "rpcUrl": `ws://127.0.0.1:9${i}44`,
         "keys": [
             {
-                "sUri": auraKeyMnemonic,
+                "sUri": `${mnemonic}${auraKeyMnemonic}`,
                 "keyType": "aura",
                 "keyringType": "sr25519"
             },
             {
-                "sUri": grandpaKeyMnemonic,
+                "sUri": `${mnemonic}${grandpaKeyMnemonic}`,
                 "keyType": "gran",
                 "keyringType": "ed25519"
             }
@@ -66,7 +67,7 @@ for (let i = 1; i <= validatorsCount; i++) {
 
 const endowedAccounts = initialAuthorities
     .map(v => v[0])
-    .concat([rootKey])
+    .concat([rootAddress])
     .map(v => [v, endowment]);
 
 console.log(`Mnemonic: ${mnemonic}`);
@@ -94,7 +95,7 @@ const chainSpecPatch = {
         authorities: initialAuthorities.map(v => [v[1], 1]),
     },
     sudo: {
-        key: rootKey,
+        key: rootAddress,
     },
     system: {},
     transactionPayment: {

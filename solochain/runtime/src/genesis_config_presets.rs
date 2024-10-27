@@ -23,8 +23,6 @@ use sp_consensus_grandpa::AuthorityId as GrandpaId;
 use sp_genesis_builder::{self, PresetId};
 use sp_keyring::AccountKeyring;
 
-pub const TESTNET_RUNTIME_PRESET: &'static str = "testnet";
-
 // Returns the genesis config presets populated with given parameters.
 fn genesis_config(
 	initial_authorities: Vec<(AuraId, GrandpaId)>,
@@ -66,7 +64,7 @@ pub fn development_config_genesis() -> Value {
 			AccountKeyring::AliceStash.to_account_id(),
 			AccountKeyring::BobStash.to_account_id(),
 		],
-		sp_keyring::AccountKeyring::Alice.to_account_id(),
+		AccountKeyring::Alice.to_account_id(),
 	)
 }
 
@@ -91,33 +89,11 @@ pub fn local_config_genesis() -> Value {
 	)
 }
 
-/// Return the test genesis config preset.
-pub fn test_config_genesis() -> Value {
-	genesis_config(
-		vec![
-			(
-				sp_keyring::Sr25519Keyring::Alice.public().into(),
-				sp_keyring::Ed25519Keyring::Alice.public().into(),
-			),
-			(
-				sp_keyring::Sr25519Keyring::Bob.public().into(),
-				sp_keyring::Ed25519Keyring::Bob.public().into(),
-			),
-		],
-		AccountKeyring::iter()
-			.filter(|v| v != &AccountKeyring::One && v != &AccountKeyring::Two)
-			.map(|v| v.to_account_id())
-			.collect::<Vec<_>>(),
-		AccountKeyring::Alice.to_account_id(),
-	)
-}
-
 /// Provides the JSON representation of predefined genesis config for given `id`.
 pub fn get_preset(id: &PresetId) -> Option<Vec<u8>> {
 	let patch = match id.try_into() {
 		Ok(sp_genesis_builder::DEV_RUNTIME_PRESET) => development_config_genesis(),
 		Ok(sp_genesis_builder::LOCAL_TESTNET_RUNTIME_PRESET) => local_config_genesis(),
-		Ok(TESTNET_RUNTIME_PRESET) => local_config_genesis(),
 		_ => return None,
 	};
 	Some(
@@ -132,6 +108,5 @@ pub fn preset_names() -> Vec<PresetId> {
 	vec![
 		PresetId::from(sp_genesis_builder::DEV_RUNTIME_PRESET),
 		PresetId::from(sp_genesis_builder::LOCAL_TESTNET_RUNTIME_PRESET),
-		PresetId::from(TESTNET_RUNTIME_PRESET),
 	]
 }

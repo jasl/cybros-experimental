@@ -8,7 +8,7 @@ COPY . /runner
 WORKDIR /runner
 
 RUN cargo fetch
-RUN cargo build --locked --release
+RUN cargo build --locked --profile production
 
 FROM --platform=linux/amd64 docker.io/parity/base-bin:latest
 
