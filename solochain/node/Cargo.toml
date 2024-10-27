@@ -23,6 +23,7 @@ jsonrpsee = { workspace = true, features = ["server"] }
 # Substrate client
 sc-cli = { workspace = true, default-features = true }
 sp-core = { workspace = true, default-features = true }
+sc-chain-spec = { workspace = true, default-features = true }
 sc-executor = { workspace = true, default-features = true }
 sc-network = { workspace = true, default-features = true }
 sc-service = { workspace = true, default-features = true }

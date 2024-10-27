@@ -1,8 +1,8 @@
 import { parse } from "https://deno.land/std/flags/mod.ts";
-import { u8aToHex, stringToHex } from "https://deno.land/x/polkadot/util/mod.ts";
-import { Keyring } from "https://deno.land/x/polkadot/keyring/mod.ts";
-import { cryptoWaitReady } from "https://deno.land/x/polkadot/util-crypto/mod.ts";
-import { KeypairType } from "https://deno.land/x/polkadot/util-crypto/types.ts";
+import { u8aToHex, stringToHex } from "npm:@polkadot/util";
+import { Keyring } from "npm:@polkadot/keyring";
+import { cryptoWaitReady } from "npm:@polkadot/util-crypto";
+import { KeypairType } from "npm:@polkadot/util-crypto";
 import { ApiPromise, createSubstrateApi } from "./deno_lib/substrate.ts";
 
 async function insertKey(
@@ -13,12 +13,18 @@ async function insertKey(
     const keyring = new Keyring({ type: keyringType }).addFromUri(sUri);
     const publicKey = u8aToHex(keyring.publicKey);
 
+    let inserted = (await api.rpc.author.hasKey(publicKey, keyType)).toJSON() as boolean;
+    if (inserted) {
+        console.log(`"${keyType}" has already been inserted, public key "${publicKey}"`);
+        return;
+    }
+
     if (dryRun) {
         return;
     }
 
     await api.rpc.author.insertKey(keyType, sUri, publicKey);
-    const inserted = (await api.rpc.author.hasKey(publicKey, keyType)).toJSON() as boolean;
+    inserted = (await api.rpc.author.hasKey(publicKey, keyType)).toJSON() as boolean;
 
     if (inserted) {
         console.log(`Set "${keyType}" successful, public key "${publicKey}"`)

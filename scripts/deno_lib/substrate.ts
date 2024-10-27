@@ -1,4 +1,4 @@
-import { ApiPromise, HttpProvider, WsProvider } from "https://deno.land/x/polkadot/api/mod.ts";
+import { ApiPromise, HttpProvider, WsProvider } from "npm:@polkadot/api";
 
 function createSubstrateApi(rpcUrl: string): ApiPromise | null {
   let provider = null;

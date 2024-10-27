@@ -86,13 +86,13 @@ console.log("");
 
 const chainSpecPatch = {
     aura: {
-        authorities: initialAuthorities.map(v => v[0]),
+        authorities: initialAuthorities.map(v => v[1]),
     },
     balances: {
         balances: endowedAccounts
     },
     grandpa: {
-        authorities: initialAuthorities.map(v => [v[1], 1]),
+        authorities: initialAuthorities.map(v => [v[2], 1]),
     },
     sudo: {
         key: rootAddress,
