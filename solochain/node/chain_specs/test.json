@@ -3,7 +3,7 @@
   "id": "cybros_test",
   "chainType": "Live",
   "bootNodes": [
-    "/dns/35.198.198.202/tcp/30333/p2p/12D3KooWPosBq8Q3u6CraVpqEBAcLg5M5HTydjhq6XyDiMAdhThx",
+    "/ip4/35.198.198.202/tcp/30333/p2p/12D3KooWPosBq8Q3u6CraVpqEBAcLg5M5HTydjhq6XyDiMAdhThx",
     "/dns/dev-node-rpc.cybros.network/tcp/443/wss/p2p/12D3KooWPosBq8Q3u6CraVpqEBAcLg5M5HTydjhq6XyDiMAdhThx"
   ],
   "telemetryEndpoints": null,
