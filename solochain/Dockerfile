@@ -12,7 +12,7 @@ RUN cargo build --locked --profile production
 
 FROM --platform=linux/amd64 docker.io/parity/base-bin:latest
 
-COPY --from=builder /runner/target/release/cybros-solochain-node /usr/local/bin
+COPY --from=builder /runner/target/production/cybros-solochain-node /usr/local/bin
 
 USER root
 RUN useradd -m -u 1001 -U -s /bin/sh -d /runner runner && \
