@@ -1,7 +1,6 @@
 # syntax=docker/dockerfile:1
-# check=skip=FromPlatformFlagConstDisallowed
 
-FROM --platform=linux/amd64 docker.io/paritytech/ci-unified:latest AS builder
+FROM docker.io/paritytech/ci-unified:latest AS builder
 
 COPY . /runner
 
@@ -10,7 +9,7 @@ WORKDIR /runner
 RUN cargo fetch
 RUN cargo build --locked --profile production
 
-FROM --platform=linux/amd64 docker.io/parity/base-bin:latest
+FROM docker.io/parity/base-bin:latest
 
 COPY --from=builder /runner/target/production/cybros-solochain-node /usr/local/bin
 
