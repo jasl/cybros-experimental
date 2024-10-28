@@ -17,6 +17,7 @@ USER root
 RUN useradd -m -u 1001 -U -s /bin/sh -d /runner runner && \
 	mkdir -p /data /runner/.local/share && \
 	chown -R runner:runner /data && \
+	chown -R runner:runner /runner && \
 	ln -s /data /runner/.local/share/runner && \
 # unclutter and minimize the attack surface
 	rm -rf /usr/bin /usr/sbin && \
