@@ -1,5 +1,9 @@
 target/
+tmp/
 Dockerfile
 .dockerignore
 
+docs/
+misc/
+scripts/
 squid/
