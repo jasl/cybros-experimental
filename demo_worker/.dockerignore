@@ -9,8 +9,4 @@ Dockerfile
 .vscode
 .idea
 
-/docs/
-/misc/
-/scripts/
-/squid/
-/demo_worker/data
+data/
