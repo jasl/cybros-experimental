@@ -3,7 +3,7 @@ tmp/
 Dockerfile
 .dockerignore
 
-docs/
-misc/
-scripts/
-squid/
+/docs/
+/misc/
+/scripts/
+/squid/

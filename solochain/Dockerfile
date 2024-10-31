@@ -14,17 +14,13 @@ FROM docker.io/parity/base-bin:latest
 COPY --from=builder /runner/target/production/cybros-solochain-node /usr/local/bin
 
 USER root
-RUN useradd -m -u 1001 -U -s /bin/sh -d /runner runner && \
-	mkdir -p /data /runner/.local/share && \
-	chown -R runner:runner /data && \
-	chown -R runner:runner /runner && \
-	ln -s /data /runner/.local/share/cybros-solochain-node && \
+
+RUN mkdir -p /data /root/.local/share && \
+	ln -s /data /root/.local/share/cybros-solochain-node && \
 # unclutter and minimize the attack surface
 	rm -rf /usr/bin /usr/sbin && \
 # check if executable works in this container
 	/usr/local/bin/cybros-solochain-node --version
-
-USER runner
 
 EXPOSE 30333 9944 9615
 VOLUME ["/data"]
