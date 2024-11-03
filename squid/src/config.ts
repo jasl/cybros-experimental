@@ -7,7 +7,7 @@ const config: {
   rpcEndpointSettings: RpcEndpointSettings
 } = {
   rpcEndpointSettings: {
-    url: process.env.NODE_RPC_ENDPOINT || "http://localhost:9944",
+    url: process.env.CHAIN_RPC_ENDPOINT || "http://localhost:9944",
     capacity: 10,
     rateLimit: 10,
     requestTimeout: 30_000,

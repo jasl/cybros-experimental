@@ -267,6 +267,12 @@ processor.run(database, async (ctx) => {
       if (changes.lastHeartbeatReceivedAt !== undefined) {
         worker.lastHeartbeatReceivedAt = changes.lastHeartbeatReceivedAt
       }
+      if (changes.uptime !== undefined) {
+        worker.uptime = changes.uptime
+      }
+      if (changes.uptimeStartedAt !== undefined) {
+        worker.uptimeStartedAt = changes.uptimeStartedAt
+      }
       if (changes.status) {
         worker.status = changes.status
 
