@@ -1,48 +1,6 @@
-import { parse } from "https://deno.land/std/flags/mod.ts";
-import { u8aToHex, stringToHex } from "npm:@polkadot/util";
-import { Keyring } from "npm:@polkadot/keyring";
-import { cryptoWaitReady } from "npm:@polkadot/util-crypto";
-import { KeypairType } from "npm:@polkadot/util-crypto";
-import { ApiPromise, createSubstrateApi } from "./deno_lib/substrate.ts";
+import { parseArgs } from "jsr:@std/cli/parse-args";
 
-async function insertKey(
-  api: ApiPromise,
-  sUri: string, keyType: string, keyringType: KeypairType,
-  dryRun: boolean
-) {
-    const keyring = new Keyring({ type: keyringType }).addFromUri(sUri);
-    const publicKey = u8aToHex(keyring.publicKey);
-
-    let inserted = (await api.rpc.author.hasKey(publicKey, keyType)).toJSON() as boolean;
-    if (inserted) {
-        console.log(`"${keyType}" has already been inserted, public key "${publicKey}"`);
-        return;
-    }
-
-    if (dryRun) {
-        return;
-    }
-
-    await api.rpc.author.insertKey(keyType, sUri, publicKey);
-    inserted = (await api.rpc.author.hasKey(publicKey, keyType)).toJSON() as boolean;
-
-    if (inserted) {
-        console.log(`Set "${keyType}" successful, public key "${publicKey}"`)
-    } else {
-        console.log(`Set "${keyType}" failed, public key "${publicKey}"`)
-    }
-
-    // // This is for Babe
-    // const encodedKeyType = stringToHex(keyType.split('').reverse().join(''));
-    // const owner = await api.query.session.keyOwner([encodedKeyType, publicKey]);
-    // if (!owner.isSome) {
-    //     console.warn(`Session key not found on-chain: ${keyType}-${publicKey}`);
-    // }
-
-    return inserted;
-}
-
-const parsedArgs = parse(Deno.args, {
+const parsedArgs = parseArgs(Deno.args, {
     alias: {
         "configPath": "c",
         "dryRun": "dry-run",
@@ -76,34 +34,60 @@ const config = (() => {
     }
 })();
 
-await cryptoWaitReady().catch((e) => {
-    console.error("Crypto module initialize failed.");
-    console.error(e.message);
-    Deno.exit(1);
-});
+import { createClient, type HexString, PolkadotClient } from "npm:polkadot-api"
+import { getWsProvider } from "npm:polkadot-api/ws-provider/node";
+import { withPolkadotSdkCompat } from "npm:polkadot-api/polkadot-sdk-compat";
+
+async function insertKey(
+    client: PolkadotClient,
+    keyType: string,
+    publicKey: HexString,
+    sUri: string,
+    dryRun: boolean
+) {
+    const hasKey = (publicKey: HexString, keyType: string): Promise<boolean> =>
+        client._request<boolean>("author_hasKey", [publicKey, keyType])
+    const insertKey = (keyType: string, sUri: string, publicKey: HexString): Promise<Uint8Array> =>
+        client._request<boolean>("author_insertKey", [keyType, sUri, publicKey])
+
+    let inserted = await hasKey(publicKey, keyType);
+    if (inserted) {
+        console.log(`"${keyType}" has already been inserted, public key "${publicKey}"`);
+        return;
+    }
+
+    if (dryRun) {
+        return;
+    }
+
+    await insertKey(keyType, sUri, publicKey);
+    inserted = await hasKey(publicKey, keyType);
+
+    if (inserted) {
+        console.log(`Set "${keyType}" successful, public key "${publicKey}"`)
+    } else {
+        console.log(`Set "${keyType}" failed, public key "${publicKey}"`)
+    }
+
+    return inserted;
+}
 
 if (dryRun) {
     console.log("Dry run mode enabled, will not actually insert keys.");
 }
 
 for (const {rpcUrl, keys} of config) {
-    const api = createSubstrateApi(rpcUrl);
-    if (api === null) {
-        console.error(`Couldn't connect to "${rpcUrl}", skipped.`);
-        continue;
+    const client = createClient(
+        withPolkadotSdkCompat(
+            getWsProvider(rpcUrl)
+        )
+    );
+
+    for (const {keyType, publicKey, sUri} of keys) {
+        await insertKey(client, keyType, publicKey, sUri, dryRun);
     }
 
-    await api.isReady.catch((e) => console.error(e));
-    if (api.isConnected) {
-        console.log(`Connected to "${rpcUrl}"`);
-    } else {
-        console.error(`Couldn't connect to "${rpcUrl}", skipped.`);
-        continue;
-    }
-
-    for (const {sUri, keyType, keyringType} of keys) {
-        await insertKey(api, sUri, keyType, keyringType, dryRun);
-    }
+    client.destroy();
 }
 
 Deno.exit(0)

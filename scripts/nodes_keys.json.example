@@ -3,14 +3,16 @@
     "rpcUrl": "ws://127.0.0.1:9944",
     "keys": [
       {
-        "sUri": "nut hire energy drill planet book wreck post saddle lend barrel twin//validator//1//aura",
         "keyType": "aura",
-        "keyringType": "sr25519"
+        "keyringType": "sr25519",
+        "publicKey": "0x1c7480818366ef27b95baf629c64a7fe2e932652cda3a0175f12adbf27db3332",
+        "sUri": "nut hire energy drill planet book wreck post saddle lend barrel twin//validator//1//aura"
       },
       {
-        "sUri": "nut hire energy drill planet book wreck post saddle lend barrel twin//validator//1//grandpa",
         "keyType": "gran",
-        "keyringType": "ed25519"
+        "keyringType": "ed25519",
+        "publicKey": "0xced64b2f746edb6544def5dd0d04dba30383a15595cb5ccc051a7f9a024f648b",
+        "sUri": "nut hire energy drill planet book wreck post saddle lend barrel twin//validator//1//grandpa"
       }
     ]
   }

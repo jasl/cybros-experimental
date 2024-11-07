@@ -1,7 +1,7 @@
 import { parseArgs } from "jsr:@std/cli/parse-args";
 import { entropyToMiniSecret, generateMnemonic, mnemonicToEntropy, ss58Address } from "npm:@polkadot-labs/hdkd-helpers";
 import { sr25519CreateDerive, ed25519CreateDerive } from "npm:@polkadot-labs/hdkd";
-import { stringToInteger } from "./deno_lib/utils.ts"
+import { bytesToHex } from "npm:@noble/hashes/utils"
 
 const ss58Prefix = 42;
 const parsedArgs = parseArgs(Deno.args, {
@@ -21,7 +21,7 @@ const parsedArgs = parseArgs(Deno.args, {
     },
 });
 
-const validatorsCount = stringToInteger(parsedArgs.validatorsCount) ?? 3;
+const validatorsCount = parseInt(parsedArgs.validatorsCount);
 const endowment = parseInt(parsedArgs.endowment);
 const mnemonic = parsedArgs.mnemonic ?? generateMnemonic();
 
@@ -52,14 +52,16 @@ for (let i = 1; i <= validatorsCount; i++) {
         "rpcUrl": `ws://127.0.0.1:9${i}44`,
         "keys": [
             {
-                "sUri": `${mnemonic}${auraKeyMnemonic}`,
                 "keyType": "aura",
-                "keyringType": "sr25519"
+                "keyringType": "sr25519",
+                "publicKey": `0x${bytesToHex(auraKeyPair.publicKey)}`,
+                "sUri": `${mnemonic}${auraKeyMnemonic}`
             },
             {
-                "sUri": `${mnemonic}${grandpaKeyMnemonic}`,
                 "keyType": "gran",
-                "keyringType": "ed25519"
+                "keyringType": "ed25519",
+                "publicKey": `0x${bytesToHex(grandpaKeyPair.publicKey)}`,
+                "sUri": `${mnemonic}${grandpaKeyMnemonic}`
             }
         ]
     })
