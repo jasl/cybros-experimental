@@ -46,7 +46,7 @@ const parsedArgs = parse(Deno.args, {
   ],
   default: {
     rpcUrl: "ws://127.0.0.1:9944",
-    bind: "127.0.0.1",
+    bind: "0.0.0.0",
     port: "8080",
     workPath: path.dirname(path.fromFileUrl(import.meta.url)),
     jobExecutorPath: path.join(path.dirname(path.fromFileUrl(import.meta.url)), "examples/echo"),
