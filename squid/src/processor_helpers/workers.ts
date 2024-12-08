@@ -2,7 +2,7 @@ import type {Context} from "../processor"
 import {events} from "../types"
 import * as v100 from "../types/v100"
 import {AttestationMethod, OfflineReason, WorkerEventKind, WorkerStatus} from "../model"
-import {decodeSS58Address, hexToU8a} from "../utils"
+import {decodeSS58Address, hexToBytes} from "../utils"
 import assert from "assert";
 
 function decodeAttestationMethod(attestationMethod?: v100.AttestationMethod): AttestationMethod {
@@ -102,7 +102,7 @@ export function preprocessWorkersEvents(ctx: Context): Map<string, WorkerChanges
           throw new Error("Unsupported spec")
         }
 
-        const address = decodeSS58Address(hexToU8a(rec.worker))
+        const address = decodeSS58Address(hexToBytes(rec.worker))
         const id = address
         const changes: WorkerChanges = changeSet.get(id) || {
           id,
@@ -117,7 +117,7 @@ export function preprocessWorkersEvents(ctx: Context): Map<string, WorkerChanges
         changes.updatedAt = blockTime
         changes.deletedAt = null
 
-        changes.owner = decodeSS58Address(hexToU8a(rec.owner))
+        changes.owner = decodeSS58Address(hexToBytes(rec.owner))
         changes.status = WorkerStatus.Registered
         changes.implId = rec.implId
 
@@ -141,7 +141,7 @@ export function preprocessWorkersEvents(ctx: Context): Map<string, WorkerChanges
           throw new Error('Unsupported spec')
         }
 
-        const address = decodeSS58Address(hexToU8a(rec.worker))
+        const address = decodeSS58Address(hexToBytes(rec.worker))
         const id = address
         let changes: WorkerChanges = changeSet.get(id) || {
           id,
@@ -193,7 +193,7 @@ export function preprocessWorkersEvents(ctx: Context): Map<string, WorkerChanges
           throw new Error('Unsupported spec')
         }
 
-        const address = decodeSS58Address(hexToU8a(rec.worker))
+        const address = decodeSS58Address(hexToBytes(rec.worker))
         const id = address
         const changes: WorkerChanges = changeSet.get(id) || {
           id,
@@ -235,7 +235,7 @@ export function preprocessWorkersEvents(ctx: Context): Map<string, WorkerChanges
           throw new Error('Unsupported spec')
         }
 
-        const address = decodeSS58Address(hexToU8a(rec.worker))
+        const address = decodeSS58Address(hexToBytes(rec.worker))
         const id = address
         const changes: WorkerChanges = changeSet.get(id) || {
           id,
@@ -269,7 +269,7 @@ export function preprocessWorkersEvents(ctx: Context): Map<string, WorkerChanges
           throw new Error('Unsupported spec')
         }
 
-        const address = decodeSS58Address(hexToU8a(rec.worker))
+        const address = decodeSS58Address(hexToBytes(rec.worker))
         const id = address
         const changes: WorkerChanges = changeSet.get(id) || {
           id,
@@ -302,7 +302,7 @@ export function preprocessWorkersEvents(ctx: Context): Map<string, WorkerChanges
           throw new Error('Unsupported spec')
         }
 
-        const address = decodeSS58Address(hexToU8a(rec.worker))
+        const address = decodeSS58Address(hexToBytes(rec.worker))
         const id = address
         const changes: WorkerChanges = changeSet.get(id) || {
           id,
@@ -347,7 +347,7 @@ export function preprocessWorkersEvents(ctx: Context): Map<string, WorkerChanges
           throw new Error('Unsupported spec')
         }
 
-        const address = decodeSS58Address(hexToU8a(rec.worker))
+        const address = decodeSS58Address(hexToBytes(rec.worker))
         const id = address
         const changes: WorkerChanges = changeSet.get(id) || {
           id,
@@ -373,7 +373,7 @@ export function preprocessWorkersEvents(ctx: Context): Map<string, WorkerChanges
           throw new Error('Unsupported spec')
         }
 
-        const address = decodeSS58Address(hexToU8a(rec.worker))
+        const address = decodeSS58Address(hexToBytes(rec.worker))
         const id = address
         const changes: WorkerChanges = changeSet.get(id) || {
           id,

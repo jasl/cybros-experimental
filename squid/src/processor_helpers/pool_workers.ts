@@ -1,6 +1,6 @@
 import type {Context} from "../processor"
 import {events} from "../types"
-import {decodeSS58Address, hexToU8a} from "../utils"
+import {decodeSS58Address, hexToBytes} from "../utils"
 import {WorkerEventKind} from "../model";
 import assert from "assert";
 
@@ -46,7 +46,7 @@ export function preprocessPoolWorkersEvents(ctx: Context): Map<string, PoolWorke
           throw new Error("Unsupported spec")
         }
 
-        const worker = decodeSS58Address(hexToU8a(rec.worker))
+        const worker = decodeSS58Address(hexToBytes(rec.worker))
         const id = `${rec.poolId}-${worker}`
         const changes: PoolWorkerChanges = changeSet.get(id) || {
           id,
@@ -79,7 +79,7 @@ export function preprocessPoolWorkersEvents(ctx: Context): Map<string, PoolWorke
           throw new Error('Unsupported spec')
         }
 
-        const worker = decodeSS58Address(hexToU8a(rec.worker))
+        const worker = decodeSS58Address(hexToBytes(rec.worker))
         const id = `${rec.poolId}-${worker}`
         const changes: PoolWorkerChanges = changeSet.get(id) || {
           id,

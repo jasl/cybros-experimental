@@ -2,7 +2,7 @@ import type {Context} from "../processor"
 import {events} from "../types"
 import * as v100 from "../types/v100"
 import {AttestationMethod} from "../model"
-import {decodeSS58Address, hexToU8a} from "../utils"
+import {decodeSS58Address, hexToBytes, hexToString} from "../utils"
 import assert from "assert";
 
 function decodeAttestationMethod(attestationMethod?: v100.AttestationMethod): AttestationMethod {
@@ -26,7 +26,7 @@ interface ImplChanges {
   owner?: string
 
   attestationMethod?: AttestationMethod
-  metadata?: Uint8Array | null
+  metadata?: string | null
 
   createdAt: Date
   updatedAt: Date
@@ -61,7 +61,7 @@ export function preprocessImplsEvents(ctx: Context): Map<string, ImplChanges> {
           updatedAt: blockTime
         }
 
-        changes.owner = decodeSS58Address(hexToU8a(rec.owner))
+        changes.owner = decodeSS58Address(hexToBytes(rec.owner))
         changes.attestationMethod = decodeAttestationMethod(rec.attestationMethod)
 
         changes.deletedAt = null
@@ -104,7 +104,17 @@ export function preprocessImplsEvents(ctx: Context): Map<string, ImplChanges> {
         }
         assert(!changes.deletedAt)
 
-        changes.metadata = hexToU8a(rec.metadata)
+        changes.metadata = (() => {
+          if (rec.metadata === undefined) {
+            return null
+          }
+
+          try {
+            return JSON.parse(hexToString(rec.metadata))
+          } catch (_e) {}
+
+          return rec.metadata
+        })()
         changes.updatedAt = blockTime
 
         changeSet.set(id, changes)

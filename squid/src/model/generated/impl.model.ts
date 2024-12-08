@@ -1,4 +1,4 @@
-import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, IntColumn as IntColumn_, ManyToOne as ManyToOne_, Index as Index_, StringColumn as StringColumn_, BytesColumn as BytesColumn_, DateTimeColumn as DateTimeColumn_, OneToMany as OneToMany_} from "@subsquid/typeorm-store"
+import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, IntColumn as IntColumn_, ManyToOne as ManyToOne_, Index as Index_, StringColumn as StringColumn_, DateTimeColumn as DateTimeColumn_, OneToMany as OneToMany_} from "@subsquid/typeorm-store"
 import {Account} from "./account.model"
 import {AttestationMethod} from "./_attestationMethod"
 import {ImplBuild} from "./implBuild.model"
@@ -27,8 +27,8 @@ export class Impl {
     @Column_("varchar", {length: 6, nullable: false})
     attestationMethod!: AttestationMethod
 
-    @BytesColumn_({nullable: true})
-    metadata!: Uint8Array | undefined | null
+    @StringColumn_({nullable: true})
+    metadata!: string | undefined | null
 
     @IntColumn_({nullable: false})
     onlineWorkersCount!: number

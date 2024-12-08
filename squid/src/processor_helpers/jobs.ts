@@ -2,7 +2,7 @@ import type {Context} from "../processor"
 import {events} from "../types"
 import * as v100 from "../types/v100";
 import {JobEventKind, JobResult, JobStatus} from "../model";
-import {decodeSS58Address, hexToString, hexToU8a} from "../utils"
+import {decodeSS58Address, hexToBytes, hexToString} from "../utils"
 import assert from "assert";
 
 function decodeJobStatus(jobStatus?: v100.JobStatus): JobStatus {
@@ -159,8 +159,8 @@ export function preprocessJobsEvents(ctx: Context): Map<string, JobChanges> {
 
         changes.uniqueTrackId = rec.uniqueTrackId
         changes.policyId = rec.policyId
-        changes.depositor = decodeSS58Address(hexToU8a(rec.depositor))
-        changes.beneficiary = decodeSS58Address(hexToU8a(rec.beneficiary))
+        changes.depositor = decodeSS58Address(hexToBytes(rec.depositor))
+        changes.beneficiary = decodeSS58Address(hexToBytes(rec.beneficiary))
         changes.status = JobStatus.Pending
         changes.implSpecVersion = rec.implSpecVersion
         changes.input = (() => {
@@ -224,7 +224,7 @@ export function preprocessJobsEvents(ctx: Context): Map<string, JobChanges> {
         assert(!changes.deletedAt)
 
         changes.uniqueTrackId = rec.uniqueTrackId
-        changes.destroyer = decodeSS58Address(hexToU8a(rec.destroyer))
+        changes.destroyer = decodeSS58Address(hexToBytes(rec.destroyer))
         changes.updatedAt = blockTime
         changes.deletedAt = blockTime
 
@@ -275,7 +275,7 @@ export function preprocessJobsEvents(ctx: Context): Map<string, JobChanges> {
         assert(!changes.deletedAt)
 
         changes.implBuildVersion = rec.implBuildVersion
-        changes.assignee = decodeSS58Address(hexToU8a(rec.assignee))
+        changes.assignee = decodeSS58Address(hexToBytes(rec.assignee))
         changes.assignedAt = blockTime
         changes.updatedAt = blockTime
 

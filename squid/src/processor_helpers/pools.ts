@@ -1,6 +1,6 @@
 import type {Context} from "../processor"
 import {events} from "../types"
-import {decodeSS58Address, hexToString, hexToU8a} from "../utils";
+import {decodeSS58Address, hexToBytes, hexToString} from "../utils";
 import assert from "assert";
 import * as v100 from "../types/v100";
 import {JobScheduler} from "../model";
@@ -33,7 +33,7 @@ interface PoolChanges {
   jobScheduler?: JobScheduler,
   createJobEnabled?: boolean
   autoDestroyProcessedJobEnabled?: boolean
-  metadata?: Uint8Array | null
+  metadata?: string | null
 
   createdAt: Date
   updatedAt: Date
@@ -71,7 +71,7 @@ export function preprocessPoolsEvents(ctx: Context): Map<string, PoolChanges> {
           updatedAt: blockTime
         }
 
-        changes.owner = decodeSS58Address(hexToU8a(rec.owner))
+        changes.owner = decodeSS58Address(hexToBytes(rec.owner))
         changes.implId = rec.poolId
         changes.minImplSpecVersion = 1
         changes.maxImplSpecVersion = 1

@@ -84,7 +84,7 @@ type Impl @entity {
   ownerAddress: String!
 
   attestationMethod: AttestationMethod!
-  metadata: Bytes
+  metadata: String
 
   # stats
   onlineWorkersCount: Int!
@@ -203,7 +203,7 @@ type Pool @entity {
   jobScheduler: JobScheduler!
   createJobEnabled: Boolean!
   autoDestroyProcessedJobEnabled: Boolean!
-  metadata: Bytes
+  metadata: String
 
   # stats
   workersCount: Int!

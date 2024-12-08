@@ -1,6 +1,6 @@
 {
   "outDir": "src/types",
-  "specVersions": "./tmp/metadata.json",
+  "specVersions": "./tmp/metadata.jsonl",
   "pallets": {
     "OffchainComputingInfra": {
       "events": [

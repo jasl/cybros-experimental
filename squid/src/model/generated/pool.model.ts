@@ -1,4 +1,4 @@
-import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, IntColumn as IntColumn_, ManyToOne as ManyToOne_, Index as Index_, StringColumn as StringColumn_, BooleanColumn as BooleanColumn_, BytesColumn as BytesColumn_, DateTimeColumn as DateTimeColumn_, OneToMany as OneToMany_} from "@subsquid/typeorm-store"
+import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, IntColumn as IntColumn_, ManyToOne as ManyToOne_, Index as Index_, StringColumn as StringColumn_, BooleanColumn as BooleanColumn_, DateTimeColumn as DateTimeColumn_, OneToMany as OneToMany_} from "@subsquid/typeorm-store"
 import {Account} from "./account.model"
 import {Impl} from "./impl.model"
 import {JobScheduler} from "./_jobScheduler"
@@ -41,8 +41,8 @@ export class Pool {
     @BooleanColumn_({nullable: false})
     autoDestroyProcessedJobEnabled!: boolean
 
-    @BytesColumn_({nullable: true})
-    metadata!: Uint8Array | undefined | null
+    @StringColumn_({nullable: true})
+    metadata!: string | undefined | null
 
     @IntColumn_({nullable: false})
     workersCount!: number
